@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Deletion</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2, p {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        .card {
+            width: 800px;
+            margin-top: 20px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button {
+            background-color: #dc3545; /* Red color for Delete button */
+            color: #fff; /* White text */
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        a {
+            background-color: #6c757d; /* Grey color for Cancel button */
+            color: #fff; /* White text */
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-left: 10px; /* Add some space between buttons */
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div th:replace="~{fragments/navbar :: header}"></div> -->
+
+    <div class="card">
+        <div class="card-body">
+            <h2>Konfirmasi Pembatalan Pengajuan</h2>
+            <p>Apakah Anda yakin ingin membatalkan pengajuan dengan ID <span th:text="${pengajuan.isPresent() ? pengajuan.get().getId() : ''}"></span>?</p>
+            <form th:action="@{/submit-pembatalan-{id}(id=${pengajuan.isPresent() ? pengajuan.get().getId() : ''})}" method="post">
+                <a href="/pengajuan" class="btn btn-secondary">Kembali</a>
+                <button type="submit" name="submit" value="submit" class="btn btn-danger">Batalkan Pengajuan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- jquery -->
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<!-- bootstrap -->
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<!-- count down -->
+<script src="assets/js/jquery.countdown.js"></script>
+<!-- isotope -->
+<script src="assets/js/jquery.isotope-3.0.6.min.js"></script>
+<!-- waypoints -->
+<script src="assets/js/waypoints.js"></script>
+<!-- owl carousel -->
+<script src="assets/js/owl.carousel.min.js"></script>
+<!-- magnific popup -->
+<script src="assets/js/jquery.magnific-popup.min.js"></script>
+<!-- mean menu -->
+<script src="assets/js/jquery.meanmenu.min.js"></script>
+<!-- sticker js -->
+<script src="assets/js/sticker.js"></script>
+<!-- main js -->
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>

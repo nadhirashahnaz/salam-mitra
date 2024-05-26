@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <style>
+      .dropdown-user:hover .dropdown-menu {
+        display: block;
+      }
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        float: left;
+        min-width: 10rem;
+        padding: 0.5rem 0;
+        margin: 0.125rem 0 0;
+        font-size: 1rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav
+      th:fragment="navbar(page)"
+      class="navbar navbar-expand-lg navbar-dark bg-primary"
+    >
+      <div class="container-fluid">
+        <div style="width: 50%">
+          <a
+            class="navbar-brand"
+            th:href="@{/}"
+            style="display: flex; align-items: center"
+          >
+            <img
+              src="../../assets/img/favicon/brand.png"
+              style="width: 170px; height: auto"
+            />
+          </a>
+        </div>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar-ex-7"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar-ex-7">
+          <ul
+            class="navbar-nav ms-lg-auto"
+            style="display: flex; align-items: center"
+          >
+            <li
+              th:if="${role == 'ROLE_ANONYMOUS' || role == 'mitra'}"
+              th:classappend="${page == 'home' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/}"> Home </a>
+            </li>
+            <li
+              th:if="${role == 'admin_PROGRAM' || role == 'admin_FINANCE' || role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'dashboard' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/}"> Dashboard </a>
+            </li>
+            <li
+              th:if="${role == 'ROLE_ANONYMOUS' || role == 'mitra' || role == 'admin_PROGRAM' || role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'program' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/program}"> Program </a>
+            </li>
+            <li
+              th:if="${role == 'mitra'}"
+              th:classappend="${page == 'pengajuan' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/pengajuan}">
+                Ajuan Saya
+              </a>
+            </li>
+            <li
+              th:if="${role == 'admin_PROGRAM' || role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'pengajuan' ? 'active' : ''}"
+            >
+              <a
+                class="nav-item nav-link"
+                th:href="@{/pengajuan}"
+                style="text-wrap: nowrap"
+              >
+                Ajuan Kerja Sama
+              </a>
+            </li>
+            <li
+              th:if="${role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'pengguna' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/pengguna}">
+                Pengguna
+              </a>
+            </li>
+            <li
+              th:if="${role == 'admin_FINANCE' || role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'pencairan' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/pencairan}">
+                Pencairan
+              </a>
+            </li>
+            <li
+              th:if="${role == 'mitra' || role == 'admin_PROGRAM' || role == 'admin_FINANCE' || role == 'manajemen' || role == 'program_service'}"
+              th:classappend="${page == 'notifikasi' ? 'active' : ''}"
+            >
+              <a class="nav-item nav-link" th:href="@{/notifikasi}">
+                Notifikasi
+              </a>
+            </li>
+            <li th:if="${role == 'ROLE_ANONYMOUS'}">
+              <a
+                class="btn btn-outline-light"
+                type="button"
+                style="margin-left: 5%"
+                th:href="@{/login}"
+              >
+                Login
+              </a>
+            </li>
+
+            <li
+              class="nav-item navbar-dropdown dropdown-user dropdown"
+              th:if="${role != 'ROLE_ANONYMOUS'}"
+            >
+              <a
+                class="nav-item nav-link dropdown-toggle hide-arrow"
+                data-bs-toggle="dropdown"
+              >
+                <div class="avatar avatar-online">
+                  <img
+                    src="../../assets/img/avatars/1.png"
+                    alt=""
+                    class="w-px-40 h-auto rounded-circle"
+                  />
+                </div>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item">
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-online">
+                          <img
+                            src="../../assets/img/avatars/1.png"
+                            alt=""
+                            class="w-px-40 h-auto rounded-circle"
+                          />
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <span
+                          class="fw-medium d-block"
+                          th:text="${user.username}"
+                        ></span>
+                        <small class="text-muted" th:text="${role}"></small>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <div class="dropdown-divider"></div>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    th:href="@{/ubah-sandi-{id}(id=${user.id})}"
+                  >
+                    <i class="bx bx-lock-alt me-2"></i>
+                    <span class="align-middle">Ganti Kata Sandi</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" th:href="@{/logout}">
+                    <i class="bx bx-power-off me-2"></i>
+                    <span class="align-middle">Log Out</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>

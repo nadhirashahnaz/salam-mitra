@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: fragment}" th:remove="tag"></object>
+    <title>Daftar Pengguna | Salam Mitra</title>
+    <style>
+      .card.table-responsive {
+        text-align: center;
+      }
+      .table:not(.table-dark) th {
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+      <div class="layout-container">
+        <div class="layout-page">
+          <nav th:replace="~{fragments/navbar :: navbar('pengguna')}"></nav>
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div class="text-center" style="padding-top: 3%; padding-bottom: 3%">
+                <h1 class="display-3"><strong>Daftar Pengguna</strong></h1>
+                <button class="btn btn-primary" type="button" onclick="window.location.href='/pengguna-tambah-admin'">
+                  + Tambah Admin
+                </button>
+              </div>
+
+              <div class="alert alert-success" role="alert" th:text="${successMessage}" th:if="${successMessage}"></div>
+              
+              <div class="card">
+                <div class="card table-responsive">
+                  <table class="datatables-basic table table-bordered table-hover" id="dataTable">
+                    <thead>
+                      <tr class="table-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-center">
+                      <tr th:each="pengguna, iterationStatus: ${listPengguna}">
+                        <td th:text="${iterationStatus.index + 1}"></td>
+                        <td th:text="${pengguna.username}"></td>
+                        <td th:text="${pengguna.email}"></td>
+                        <td>
+                          <span th:if="${pengguna.getRole() == 'admin' and #strings.equalsIgnoreCase(pengguna.adminRole, 'PROGRAM')}">Admin Program</span>
+                          <span th:if="${pengguna.getRole() == 'admin' and #strings.equalsIgnoreCase(pengguna.adminRole, 'FINANCE')}">Admin Finance</span>
+                          <span th:if="${pengguna.getRole() == 'mitra'}">Mitra</span>
+                          <span th:if="${pengguna.getRole() == 'program_service'}">Program Service</span>
+                          <span th:if="${pengguna.getRole() == 'manajemen'}">Manajemen</span>
+                        </td>
+                        <td>
+                          <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attr="data-id=${pengguna.id},data-username=${pengguna.username},data-role=${pengguna.getRole()}" th:if="${pengguna.getRole() == 'mitra'} or ${pengguna.username == currentUserUsername}" disabled>
+                            Hapus
+                          </button>
+                          <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attr="data-id=${pengguna.id},data-username=${pengguna.username},data-role=${pengguna.getRole()}" th:unless="${pengguna.getRole() == 'mitra'} or ${pengguna.username == currentUserUsername}">
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Hapus Pengguna</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="deleteModalText"></p>
+          </div>
+          <div class="modal-footer" style="display: flex; justify-content: center;">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <form id="deleteForm" th:action="@{/pengguna-hapus/__${id}__}" method="post">
+              <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+              <button type="submit" class="btn btn-danger">Hapus</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+          const button = event.relatedTarget;
+          const userId = button.getAttribute('data-id');
+          const username = button.getAttribute('data-username');
+          const role = button.getAttribute('data-role');
+
+          const modalText = deleteModal.querySelector('#deleteModalText');
+          modalText.textContent = `Apakah Anda yakin ingin menghapus pengguna dengan username ${username}?`;
+
+          const deleteForm = deleteModal.querySelector('#deleteForm');
+          deleteForm.action = `/pengguna-hapus-${userId}`;
+        });
+      });
+
+      function removeAlerts() {
+        setTimeout(function() {
+          jQuery('.alert').fadeOut('fast', function() {
+            jQuery(this).remove();
+          });
+        }, 3000);
+      }
+
+      removeAlerts();
+    </script>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

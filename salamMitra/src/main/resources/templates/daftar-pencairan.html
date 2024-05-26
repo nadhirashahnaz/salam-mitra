@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Daftar pengajuan | Salam Mitra</title>
+    <style>
+      .card.table-responsive {
+        text-align: center;
+      }
+      .table:not(.table-dark) th {
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+      <div class="layout-container">
+        <div class="layout-page">
+          <nav th:replace="~{fragments/navbar :: navbar('pencairan')}"></nav>
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div
+                class="text-center"
+                style="padding-top: 3%; padding-bottom: 3%"
+              >
+                <h1 class="display-3"><strong>Daftar Pencairan</strong></h1>
+              </div>
+
+              <div
+                class="alert alert-success"
+                role="alert"
+                th:text="${successMessage}"
+                th:if="${successMessage}"
+              ></div>
+
+              <div style="text-align: left; margin-bottom: 10px">
+                <input
+                  type="text"
+                  id="searchInput"
+                  onkeyup="searchTable()"
+                  placeholder="Cari pencairan..."
+                  class="form-control"
+                />
+              </div>
+
+              <div class="card">
+                <div class="card table-responsive">
+                  <table
+                    class="datatables-basic table table-bordered table-hover"
+                    id="dataTable"
+                  >
+                    <thead>
+                      <tr class="table-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">ID Pengajuan</th>
+                        <th scope="col">Tanggal Pengajuan</th>
+                        <th scope="col">Nama Mitra</th>
+                        <th scope="col">Nominal Kebutuhan Dana</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody th:if="${listPencairan.isEmpty()}">
+                      <tr>
+                        <td colspan="8">
+                          Belum ada daftar pengajuan yang membutuhkan pencairan
+                          dana.
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tbody th:unless="${listPencairan.isEmpty()}">
+                      <tr id="noResultRow" style="display: none">
+                        <td colspan="6">
+                          Pengajuan pencairan dana tidak ditemukan.
+                        </td>
+                      </tr>
+                      <tr
+                        th:each="pencairan, iterationStatus: ${listPencairan}"
+                      >
+                        <td th:text="${iterationStatus.count}"></td>
+                        <td th:text="${pencairan.id}"></td>
+                        <td
+                          th:text="${#dates.format(pencairan.waktuDibuat, 'HH:mm:ss dd/MM/yyyy')}"
+                        ></td>
+                        <td th:text="${pencairan.namaMitra}"></td>
+                        <td
+                          th:text="'Rp ' + ${pencairan.nominalKebutuhanDana}"
+                        ></td>
+                        <th:block
+                          th:if="${role == 'program_service' || role == 'manajemen'}"
+                        >
+                          <td>
+                            <span
+                              class="badge rounded-pill bg-label-danger me-1"
+                              th:if="${pencairan.status == 'Menunggu Pencairan Dana oleh Program Service'}"
+                              th:text="${pencairan.status}"
+                            ></span>
+                            <span
+                              class="badge rounded-pill bg-label-warning me-1"
+                              th:if="${pencairan.status == 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                              th:text="${pencairan.status}"
+                            ></span>
+                            <span
+                              class="badge rounded-pill bg-label-success me-1"
+                              th:unless="${pencairan.status == 'Menunggu Pencairan Dana oleh Program Service' || pencairan.status == 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                              >Sudah Dicairkan</span
+                            >
+                          </td>
+                        </th:block>
+                        <th:block th:if="${role == 'admin_FINANCE'}">
+                          <td>
+                            <span
+                              class="badge rounded-pill bg-label-success me-1"
+                              th:if="${pencairan.status != 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                              >Sudah Dicairkan</span
+                            >
+                            <span
+                              class="badge rounded-pill bg-label-danger me-1"
+                              th:unless="${pencairan.status != 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                              th:text="${pencairan.status}"
+                            ></span>
+                          </td>
+                        </th:block>
+                        <td>
+                          <a
+                            type="button"
+                            class="boxed-btn"
+                            style="width: 90px"
+                            th:href="@{/pencairan-detail-{id}(id=${pencairan.id})}"
+                            >Detail</a
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Menampilkan pesan sukses
+      document.getElementById("successMessage").style.display = "block";
+      // Mengatur waktu tampilan pesan sebelum menghilang
+      setTimeout(function () {
+        document.getElementById("successMessage").style.display = "none";
+      }, 2000); // 3000 milliseconds = 3 seconds
+    </script>
+
+    <script>
+      function searchTable() {
+        // Mendapatkan nilai input pencarian
+        var input, filter, table, tr, td, i, txtValue, noResultRow;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("dataTable");
+        tr = table.getElementsByTagName("tr");
+        noResultRow = document.getElementById("noResultRow"); // Baris pesan "pengajuan tidak ditemukan"
+
+        // Loop melalui semua baris tabel, sembunyikan yang tidak sesuai dengan query pencarian
+        var found = false; // Menandakan apakah ada hasil pencarian yang ditemukan
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td");
+          for (var j = 0; j < td.length; j++) {
+            if (td[j]) {
+              txtValue = td[j].textContent || td[j].innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                found = true; // Ada hasil pencarian yang ditemukan
+                break;
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+
+        // Tampilkan atau sembunyikan pesan "pengajuan tidak ditemukan" tergantung pada hasil pencarian
+        if (!found) {
+          noResultRow.style.display = ""; // Tampilkan pesan jika tidak ada hasil pencarian
+        } else {
+          noResultRow.style.display = "none"; // Sembunyikan pesan jika ada hasil pencarian
+        }
+      }
+    </script>
+    <script>
+      function removeAlerts() {
+        setTimeout(function () {
+          jQuery(".alert").fadeOut("fast", function () {
+            jQuery(this).remove();
+          });
+        }, 3000);
+      }
+
+      removeAlerts();
+    </script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:insert="~{fragments/common :: fragment}" th:remove="tag"></object>
+    <title>Detail Ajuan | Salam Mitra</title>
+    <style>
+        .card.table-responsive {
+            text-align: center;
+        }
+        .table:not(.table-dark) th {
+            color: white;
+        }
+        .card {
+            margin-bottom: 2%;
+            margin-left: 4%;
+            margin-right: 4%;
+        }
+
+        .disabled {
+            pointer-events: none;
+            /* Menonaktifkan interaksi pengguna */
+            opacity: 0.65;
+            /* Memberikan efek transparansi pada tombol yang dinonaktifkan */
+            cursor: not-allowed;
+            /* Mengubah ikon kursor saat diarahkan ke tombol yang dinonaktifkan */
+        }
+
+        .container .steps {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .steps .round {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            width: 50px;
+            color: #999;
+            font-size: 22px;
+            font-weight: 500;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid #e0e0e0;
+            transition: all 200ms ease;
+            transition-delay: 0s;
+        }
+
+        .steps .status-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-right: auto;
+        }
+
+        .steps .round.active {
+            transition-delay: 100ms;
+            border-color: #4070f4;
+            color: #4070f4;
+        }
+
+        .steps .progress-bar {
+            position: absolute;
+            height: 4px;
+            width: 96%;
+            background: #e0e0e0;
+            z-index: -1;
+        }
+
+        .progress-bar .indicator {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: #4070f4;
+            transition: all 300ms ease;
+        }
+
+        .col-auto {
+            padding-left: 0%;
+            padding-right: 15px;
+        }
+        .container2 {
+            display: flex;
+            justify-content: center;
+        }
+
+        .col-auto2 {
+            margin: 0 10px; /* Jarak antar tombol */
+        }
+
+        .boxed-btn2 {
+            width: 200px; /* Sesuaikan ukuran sesuai kebutuhan */
+            height: 40px; /* Sesuaikan ukuran sesuai kebutuhan */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center; /* Teks menjadi terpusat */
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Style untuk tombol warna biru */
+        .boxed-btn.blue {
+            background-color: #5995fd;
+        }
+
+        /* Style untuk tombol warna merah */
+        .boxed-btn.red {
+            background-color: #dc3545;
+        }
+
+        /* Style untuk modal konfirmasi */
+        #pembatalanModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            text-align: end;
+        }
+
+        .close {
+            color: rgb(144, 144, 144);
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content p {
+            padding: 10px 0;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .modal-content button {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 10px; 
+            border: none;
+            cursor: pointer;
+            background-color: #9c9c9c;
+            color: #fff;
+        }
+
+        .modal-content button:hover {
+            background-color: #f23d3d;
+            color: #fff;
+        }
+
+        .button-row-modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+      <div class="layout-container">
+            <div class="layout-page">
+                <nav th:replace="~{fragments/navbar :: navbar('pengajuan')}"></nav>
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+
+                    <div class="container" data-aos="fade-up">
+
+                        <div class="row d-flex justify-content-center">
+                            
+                            <div
+                                th:if="${role == 'mitra'}"
+                                class="text-center"
+                                style="padding-top: 3%; padding-bottom: 3%"
+                            >
+                                <h1 class="display-3"><strong> Detail Pengajuan </strong></h1>
+                            </div>
+
+                            <div
+                                th:if="${role == 'admin_PROGRAM' || role == 'manajemen' || role == 'program_service'}"
+                                class="text-center"
+                                style="padding-top: 3%; padding-bottom: 3%"
+                            >
+                                <h1 class="display-3">
+                                <strong> Review Pengajuan Kerja Sama</strong>
+                                </h1>
+                            </div>
+
+                            <div class="steps" style="margin-top: 50px;">
+                                <div>
+                                    <span class="round active"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-file-earmark-arrow-up-fill" viewBox="0 0 16 16">
+                                            <path
+                                                d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z" />
+                                        </svg></span>
+                                </div>
+                                <th:block th:if="${pengajuan.status == 'Dibatalkan'}">
+                                    <div>
+                                        <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+                                            </svg></span>
+                                    </div>
+                                </th:block>
+                                <th:block th:unless="${pengajuan.status == 'Dibatalkan'}">                                
+                                    <th:block th:unless="${pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-clipboard2-data-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5" />
+                                                    <path
+                                                        d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585q.084.236.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5q.001-.264.085-.5M10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1" />
+                                                </svg></span>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247m2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" />
+                                                </svg></span>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${pengajuan.status == 'Ditolak'}">
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-slash-circle-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.646-2.646a.5.5 0 0 0-.708-.708l-6 6a.5.5 0 0 0 .708.708z" />
+                                                </svg></span>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:unless="${pengajuan.status == 'Ditolak' || pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-credit-card-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0zm0 3v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7zm3 2h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1" />
+                                                </svg></span>
+                                        </div>
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-book-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
+                                                </svg></span>
+                                        </div>
+                                        <div>
+                                            <span class="round"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                </svg></span>
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                                <div class="progress-bar">
+                                    <span class="indicator"></span>
+                                </div>
+                            </div>
+
+                            <div class="steps">
+                                <div>
+                                    <span class="status-label">Diajukan</span>
+                                </div>
+
+                                <th:block th:if="${pengajuan.status == 'Dibatalkan'}">
+                                    <div>
+                                        <span class="status-label">Dibatalkan</span>
+                                    </div>
+                                </th:block>
+
+                                <th:block th:unless="${pengajuan.status == 'Dibatalkan'}">
+                                    <th:block th:unless="${pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="status-label">Sedang Diperiksa</span>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="status-label">Perlu Direvisi</span>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${pengajuan.status == 'Ditolak'}">
+                                        <div>
+                                            <span class="status-label">Ditolak</span>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:unless="${pengajuan.status == 'Ditolak' || pengajuan.status == 'Perlu Revisi'}">
+                                        <div>
+                                            <span class="status-label">Menunggu Pencairan Dana</span>
+                                        </div>
+                                        <div>
+                                            <span class="status-label">Menunggu Laporan</span>
+                                        </div>
+                                        <div>
+                                            <span class="status-label">Selesai</span>
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
+
+                            <div id="statusElement" th:text="${status}" style="display: none;"></div>
+
+                            <div class="card" style="margin-top: 4%;">
+                                <div class="card-header">
+                                     <h4><strong>Status & Pembaruan</strong></h4>
+                                     <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <h4>Status Ajuan :
+                                        <th:block th:if="${role eq 'mitra'}">
+                                            <span 
+                                                class="badge rounded-pill bg-label-info me-1"
+                                                th:if="${pengajuan.status eq 'Diajukan'}"
+                                                >Diajukan
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-info me-1"
+                                                th:if="${pengajuan.status eq 'Diteruskan ke Manajemen' or pengajuan.status eq 'Sedang Diperiksa'}"
+                                                >Sedang Diperiksa
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-warning me-1"
+                                                th:if="${pengajuan.status eq 'Perlu Revisi'}"
+                                                >Perlu Direvisi
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-warning me-1"
+                                                th:if="${pengajuan.status eq 'Menunggu Laporan'}"
+                                                >Menunggu Laporan
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-success me-1"
+                                                th:if="${pengajuan.status eq 'Menunggu Pencairan Dana oleh Program Service'
+                                                    or pengajuan.status eq 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                                                >Menunggu Pencairan Dana
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-success me-1"
+                                                th:if="${pengajuan.status eq 'Selesai'}"
+                                                >Selesai
+                                            </span>
+                                            <span 
+                                                class="badge rounded-pill bg-label-danger me-1"
+                                                th:if="${pengajuan.status eq 'Ditolak' 
+                                                or pengajuan.status eq 'Dibatalkan'}" 
+                                                th:text="${pengajuan.status}">
+                                            </span>
+                                        </th:block>
+                                        <th:block th:unless="${role eq 'mitra'}">
+                                            <span 
+                                                class="badge rounded-pill bg-label-info me-1"
+                                                th:if="${pengajuan.status eq 'Diajukan'}"
+                                                >Diajukan
+                                              </span>
+                                              <span 
+                                                  class="badge rounded-pill bg-label-info me-1"
+                                                  th:if="${pengajuan.status eq 'Sedang Diperiksa'}"
+                                                  >Sedang Diperiksa
+                                                </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-info me-1"
+                                                th:if="${pengajuan.status eq 'Diteruskan ke Manajemen'}"
+                                                >Diteruskan ke Manajemen
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-warning me-1"
+                                                th:if="${pengajuan.status eq 'Perlu Revisi'}"
+                                                >Perlu Direvisi
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-warning me-1"
+                                                th:if="${pengajuan.status eq 'Menunggu Laporan'}"
+                                                >Menunggu Laporan
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-success me-1"
+                                                th:if="${pengajuan.status eq 'Menunggu Pencairan Dana oleh Admin Finance'}"
+                                                >Menunggu Pencairan Dana oleh Admin Finance
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-success me-1"
+                                                th:if="${pengajuan.status eq 'Menunggu Pencairan Dana oleh Program Service'}"
+                                                >Menunggu Pencairan Dana oleh Program Service
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-success me-1"
+                                                th:if="${pengajuan.status eq 'Selesai'}"
+                                                >Selesai
+                                              </span>
+                                              <span 
+                                                class="badge rounded-pill bg-label-danger me-1"
+                                                th:if="${pengajuan.status eq 'Ditolak' 
+                                                  or pengajuan.status eq 'Dibatalkan'}" 
+                                                th:text="${pengajuan.status}">
+                                              </span>
+                                        </th:block>
+                                    </h4>
+                                    
+                                    <div style="margin-top: 30px;">
+                                        <h5 style="margin-bottom: 5px;">Status terakhir diperbarui</h5>
+                                        <div th:if="${pengajuan.reviewedBy == null}">
+                                            <p style="margin: 0;">-</p>
+                                        </div>
+                                        <div th:if="${pengajuan.reviewedBy != null}">
+                                            <p style="margin: 0;" th:text="${pengajuan.reviewedBy}"></p>
+                                        </div>
+
+                                        
+                                        <div th:if="${pengajuan.komentar != null}" style="margin-top: 30px; text-align: left;">
+                                            <h5 style="margin-top: 40px;">Komentar</h5>
+                                            <div class="sub-heading"
+                                                style="border: 1px solid #ccc; background-color: #f9f9f9; padding: 10px;">
+                                                <hr class="mt-1 mb-4">
+                                                <p th:text="${pengajuan.komentar}" class="text-muted"></p>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- UPLOAD LAPORAN JIKA DANA PENCAIRAN TELAH SELESAI DICAIRKAN KE REKENING MITRA -->
+                                        <div th:if="${pengajuan.status == 'Menunggu Laporan'}" style="margin-top: 30px; text-align: left;">
+                                            <h5 style="margin-bottom: 5px;">Upload Laporan</h5>
+                                            <div style="text-align: left;">
+                                                <th:block th:if="${pengajuan.tanggalLaporan.time lt #dates.createNow().time}">
+                                                    <small class="form-text text-muted" style="margin-bottom: 5px; color: red; margin-left: 0;">Anda telah melewati batas waktu pengumpulan laporan!</small>
+                                                </th:block>
+                                                <th:block th:unless="${pengajuan.tanggalLaporan.time lt #dates.createNow().time}">
+                                                    <small class="form-text text-muted" style="margin-bottom: 5px; color: red; margin-left: 0;">Mohon untuk mengumpulkan laporan sebelum <span th:text="${#dates.format(pengajuan.tanggalLaporan, 'dd/MM/yyyy')}"></span> 23:59</small>
+                                                    <form id="submitLaporan" th:action="@{/submit-laporan-{id}(id=${pengajuan.id})}" method="post" enctype="multipart/form-data" style="margin-bottom: 5px; margin-left: 0;">
+                                                        <input type="file" name="laporan" accept=".pdf" class="form-control-file form-control" required maxFileSize="25MB">
+                                                        <small class="form-text text-muted">Ukuran file pdf maximum: 25MB</small>
+                                                        <div class="text-danger" id="fileSizeError" style="display: none; color: red;">Ukuran file pdf tidak boleh lebih dari 25MB.</div>
+                                                        <br>
+                                                        <div style="text-align:center">
+                                                            <button type="submit" name="submit" value="submit" class="btn btn-success">Submit</button>
+                                                        </div>
+                                                    </form>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div th:if="${role eq 'admin_PROGRAM' or role eq 'manajemen' or role eq 'mitra'}">
+                                            <div th:if="${pengajuan.status == 'Menunggu Laporan' || pengajuan.status == 'Selesai'}"
+                                                style="text-align: left;">
+                                                <h5 style="margin-bottom: 5px;">Bukti Pencairan Dana</h5>
+                                                <div style="text-align: center;">
+                                                    <img th:src="'data:image/jpeg;base64,' + ${buktiPencairanMitra}"
+                                                        style="max-width: 200px; height: auto; object-fit: cover; display: block; margin: 0 auto;"
+                                                        alt="Bukti Pencairan ke Rekening Mitra" /><br>
+                                                    <a th:href="'data:image/jpeg;base64,' + ${buktiPencairanMitra}"
+                                                    th:download="'BuktiPencairanDana-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.jpg'"
+                                                        style="display: block; margin: 0 auto;">Download</a>
+                                                </div>
+                                                
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div th:if="${role eq 'admin_PROGRAM' or role eq 'manajemen' or role eq 'mitra'}"
+                                        style="margin-top: 30px;">
+                                        <div th:if="${pengajuan.status == 'Selesai'}"
+                                            style="margin-top: 30px; text-align: left;">
+                                            <div>
+                                                <h5 style="margin-bottom: 5px;">Laporan Akhir</h5>
+
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <div id="laporanContainer" style="width: 65%; height: 800px; overflow: auto; margin: 0 auto">
+                                                    <embed id="laporanPreview"
+                                                        th:attr="src='data:application/pdf;base64,' + ${pengajuan.laporanBase64}"
+                                                        type="application/pdf" style="width: 100%; height: 100%;" />
+                                                    <!-- Set width and height to 100% -->
+                                                </div>
+                                                <div>
+                                                    <button id="fullscreenButton"
+                                                        onclick="toggleFullScreen('laporanPreview')">Fullscreen</button>
+                                                    <!-- Button to toggle full screen -->
+                                                    <a th:href="'data:application/pdf;base64,' + ${pengajuan.laporanBase64}"
+                                                        th:download="'Laporan-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.pdf'">
+                                                        <button id="downloadButton">Download</button>
+                                                        <!-- Button to download PDF -->
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><strong>Informasi Umum</strong></h4>
+                                    <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr class="no-border">
+                                            <td>ID Pengajuan</td>
+                                            <td><span th:text="': ' + ${pengajuan.id}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Waktu Dibuat</td>
+                                            <td><span
+                                                    th:text="': ' + ${#dates.format(pengajuan.waktuDibuat, 'HH:mm:ss dd/MM/yyyy')}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Nama Mitra</td>
+                                            <td><span th:text="': ' + ${pengajuan.namaMitra}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Nama Program</td>
+                                            <td><span th:text="': ' + ${pengajuan.namaProgram}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Kategori</td>
+                                            <td><span th:text="': ' + ${pengajuan.kategori}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Nama Person in Charge (PIC)</td>
+                                            <td><span th:text="': ' + ${pengajuan.namaPIC}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Kontak Person in Charge (PIC)</td>
+                                            <td><span th:text="': ' + ${pengajuan.kontakPIC}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Alamat Kantor atau Rumah</td>
+                                            <td><span th:text="': ' + ${pengajuan.alamatKantor}"></span></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>
+                                                <div>KTP Person in Charge (PIC)</div>
+                                            </td>
+                                            <td>
+                                                <img th:src="'data:image/jpeg;base64,' + ${pengajuan.imageBase64}"
+                                                    class="card-img-top" alt="KTP PIC"
+                                                    style="max-width: 500px; height: auto; object-fit: cover;"><br>
+                                                <a th:href="'data:image/jpeg;base64,' + ${pengajuan.imageBase64}"
+                                                    th:download="'KTP-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.jpg'">Download</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><strong>Tanggal dan Lokasi</strong></h4>
+                                    <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr class="no-border">
+                                            <td>Tanggal Mulai Implementasi</td>
+                                            <td><span
+                                                    th:text="': ' + ${#dates.format(pengajuan.tanggalMulai, 'dd/MM/yyyy')}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Tanggal Selesai Implementasi</td>
+                                            <td><span
+                                                    th:text="': ' + ${#dates.format(pengajuan.tanggalSelesai, 'dd/MM/yyyy')}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Tanggal Selesai Laporan</td>
+                                            <td><span
+                                                    th:text="': ' + ${#dates.format(pengajuan.tanggalSelesai, 'dd/MM/yyyy')}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Lokasi Penyaluran Dana</td>
+                                            <td><span
+                                                    th:text="': ' + ${pengajuan.alamatLengkap} + ', ' + ${pengajuan.kecamatan} + ', ' + ${pengajuan.kabupatenKota} + ', ' + ${pengajuan.provinsi}"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><strong>Kebutuhan Dana</strong></h4>
+                                    <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+
+                                        <tr class="no-border">
+                                            <td>Nama Pemilik Rekening</td>
+                                            <td th:text="': ' + ${pengajuan.namaPemilikRekening}"></td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Bank & Nomor Rekening</td>
+                                            <td><span
+                                                    th:text="': ' + ${pengajuan.bank} + ' - ' + ${pengajuan.nomorRekening}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>
+                                                <div>Foto Buku Tabungan/M-Banking</div>
+                                            </td>
+                                            <td>
+                                                <img th:src="'data:image/jpeg;base64,' + ${pengajuan.bukuTabunganBase64}"
+                                                    class="card-img-top" alt="Foto Buku Tabungan"
+                                                    style="max-width: 500px; height: auto; object-fit: cover;"><br>
+                                                <a th:href="'data:image/jpeg;base64,' + ${pengajuan.bukuTabunganBase64}"
+                                                    th:download="'BukuTabungan-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.jpg'">Download</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td>Nominal Kebutuhan Dana</td>
+                                            <td th:text="': ' + ${nominalString}"></td>
+                                        </tr>
+                                    </table>
+                                    <h5 style="margin-top: 10px;">List Kebutuhan Dana</h5>
+                                    <div class="card table-responsive text-nowrap">
+                                        <table class="datatables-basic table table-bordered table-hover">
+                                            <thead class="table-dark">
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Asnaf</th>
+                                                <th scope="col">Jumlah Penerima</th>
+                                                <th scope="col">Pilar</th>
+                                                <th scope="col">Jenis Bantuan</th>
+                                                <th scope="col">Jumlah Dana</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            <tr th:each="kebutuhanDana, iterasi: ${pengajuan.listKebutuhanDana}">
+                                                <td th:text="${iterasi.index + 1}"></td>
+                                                <td th:text="${kebutuhanDana.asnaf}"></td>
+                                                <td th:text="${kebutuhanDana.jumlahPenerima}"></td>
+                                                <td th:text="${kebutuhanDana.pilar}"></td>
+                                                <td th:text="${kebutuhanDana.jenisBantuan}"></td>
+                                                <td th:text="${listJumlahDana[iterasi.index]}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><strong>Dokumen</strong></h4>
+                                    <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr class="no-border">
+                                            <td colspan="2">
+                                                <h5 style="margin-top: 20px;">Rancangan Anggaran Biaya (RAB)</h5>
+                                                <br>
+                                                <!-- Embed PDF within the webpage with dynamic dimensions -->
+                                                <div style="text-align: center;">
+                                                    <div id="rabContainer" style="width: 65%; height: 800px; overflow: auto; margin: 0 auto">
+                                                        <embed id="rabPreview"
+                                                            th:attr="src='data:application/pdf;base64,' + ${pengajuan.rabBase64}"
+                                                            type="application/pdf" style="width: 100%; height: 100%;" />
+                                                        <!-- Set width and height to 100% -->
+                                                    </div>
+                                                    <div>
+                                                        <button id="fullscreenButton"
+                                                            onclick="toggleFullScreen('rabPreview')">Fullscreen</button>
+                                                        <!-- Button to toggle full screen -->
+                                                        <a th:href="'data:application/pdf;base64,' + ${pengajuan.rabBase64}"
+                                                            th:download="'RAB-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.pdf'">
+                                                            <button id="downloadButton">Download</button>
+                                                            <!-- Button to download PDF -->
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        <tr class="no-border">
+                                            <td colspan="2">
+                                                <h5 style="margin-top: 20px;">Dokumen Perizinan</h5>
+                                                <br>
+                                                <!-- Embed PDF within the webpage with dynamic dimensions -->
+                                                <div style="text-align: center;">
+                                                    <div id="docContainer" style="width: 65%; height: 800px; overflow: auto; margin: 0 auto">
+                                                        <embed id="docPreview"
+                                                            th:attr="src='data:application/pdf;base64,' + ${pengajuan.dokumenBase64}"
+                                                            type="application/pdf" style="width: 100%; height: 100%;" />
+                                                        <!-- Set width and height to 100% -->
+                                                    </div>
+                                                    <div>
+                                                        <a th:href="'data:application/pdf;base64,' + ${pengajuan.rabBase64}"
+                                                            th:download="'RAB-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.pdf'">
+                                                            <button id="fullscreenButton"
+                                                                onclick="toggleFullScreen('docPreview')">Fullscreen</button>
+                                                            <!-- Button to toggle full screen -->
+                                                            <a th:href="'data:application/pdf;base64,' + ${pengajuan.rabBase64}"
+                                                                th:download="'RAB-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.pdf'">
+                                                                <a th:href="'data:application/pdf;base64,' + ${pengajuan.dokumenBase64}"
+                                                                    th:download="'Doc-' + ${pengajuan.id} + '-' + ${pengajuan.namaMitra} +'.pdf'">
+                                                                    <button id="downloadButton">Download</button>
+                                                                    <!-- Button to download PDF -->
+                                                                </a>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="container justify-content-center">
+                                <div th:if="${role eq 'admin_PROGRAM'}">
+
+                                    <!-- Form akan ditampilkan jika status "Sedang Diperiksa" -->
+                                    <div th:if="${pengajuan.status == 'Sedang Diperiksa'}">
+                                        <hr class="mt-1 mb-4">
+                                        <form id="reviewForm" th:action="@{/review-pengajuan-admin-{id}(id=${pengajuan.id})}"
+                                            method="post">
+                                            <textarea class="form-control" rows="3" name="comment"
+                                                placeholder="Tulis komentar di sini..."></textarea>
+
+                                                <br>
+                                                <div class="row">
+                                                    <div class="container2" style="align-content: center;">
+                                                        <!-- Jika NominalKebutuhanDana kurang dari 70.000.000 -->
+                                                        <div th:if="${pengajuan.NominalKebutuhanDana lt 70000000}" class="col-auto">
+                                                            <button type="submit" name="action" value="setujui" class="btn btn-primary"
+                                                                style="width: 200px; ">Setujui</button>
+                                                        </div>
+                                                        <div th:unless="${pengajuan.NominalKebutuhanDana lt 70000000}" class="col-auto">
+                                                            <button type="submit" name="action" value="teruskan" class="btn btn-primary"
+                                                                style="width: auto; ">Teruskan ke Manajemen</button>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <button type="submit" name="action" value="tolak" class="btn btn-danger"
+                                                                style="min-width: 200px; ">Tolak</button>
+                                                        </div>     
+                                                        <div  class="col-auto">
+                                                            <button type="submit" name="action" value="perlu-revisi" class="btn btn-warning"
+                                                                style="width: 200px; ">Perlu Direvisi</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div th:if="${role eq 'manajemen'}">
+
+                                    <!-- Form akan ditampilkan jika status "Sedang Diperiksa" -->
+                                    <div th:if="${pengajuan.status == 'Diteruskan ke Manajemen'}">
+                                        <hr class="mt-1 mb-4">
+                                        <form id="reviewForm"
+                                            th:action="@{/review-pengajuan-manajemen-{id}(id=${pengajuan.id})}" method="post">
+                                            <textarea class="form-control" rows="3" name="comment"
+                                                placeholder="Tulis komentar di sini..."></textarea>
+                                                <br>
+                                            <div class="row">
+                                                <div class="container2" style="align-content: center;">
+                                                    <!-- Jika NominalKebutuhanDana kurang dari 70.000.000 -->
+                                                    <div class="col-auto">
+                                                        <button type="submit" name="action" value="setujui" class="btn btn-primary"
+                                                            style="width: 200px; ">Setujui</button>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button type="submit" name="action" value="tolak" class="btn btn-danger"
+                                                            style="min-width: 200px; ">Tolak</button>
+                                                    </div>     
+                                                    <div  class="col-auto">
+                                                        <button type="submit" name="action" value="perlu-revisi" class="btn btn-warning"
+                                                            style="width: 200px; ">Perlu Direvisi</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="container2" style="align-content: center;">
+                                <div th:if="${role eq 'mitra'}" class="col-auto">
+                                    <a class="btn btn-primary" style="width: 200px;text-align: center;"
+                                        th:href="@{/submit-revisi-{id}(id=${pengajuan.id})}"
+                                        th:if="${pengajuan.status == 'Diajukan' || pengajuan.status == 'Perlu Revisi'}">Revisi Ajuan
+                                    </a>
+                                </div>
+                                <div th:if="${role eq 'mitra'}" class="col-auto">
+                                    <a class="btn btn-danger" style="width: 200px;text-align: center;color:white"
+                                        onclick="showPembatalanModal()"
+                                        th:if="${pengajuan.status == 'Diajukan' || pengajuan.status == 'Perlu Revisi'}">Batalkan Ajuan</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal konfirmasi penghapusan -->
+                    <div id="pembatalanModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closePembatalanModal()">&times;</span>
+                            <p>Apakah Anda yakin ingin membatalkan pengajuan ini?</p>
+                            <div class="button-row-modal">
+                                <!-- Tombol untuk mengonfirmasi penghapusan -->
+                                <form id="pembatalanForm" th:action="@{/submit-pembatalan-{id}(id=${pengajuan.id})}" method="post">
+                                    <button type="submit" name="submit" value="submit">Batalkan Pengajuan</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+    </div>
+
+
+    <!-- Script untuk modal konfirmasi -->
+    <script>
+        var pembatalanModal = document.getElementById("pembatalanModal");
+
+        function showPembatalanModal() {
+            pembatalanModal.style.display = "block";
+        }
+
+        function closePembatalanModal() {
+            pembatalanModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == pembatalanModal) {
+                closePembatalanModal();
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var pengajuanStatus = "${pengajuan.status}";
+            var revisiButton = document.getElementById('revisiButton');
+            var cancelButton = document.getElementById('cancelButton');
+
+
+            if (pengajuanStatus !== 'Diajukan' && pengajuanStatus !== 'Perlu Revisi') {
+                revisiButton.setAttribute('disabled', 'disabled');
+                cancelButton.setAttribute('disabled', 'disabled');
+            }
+        });
+    </script>
+
+    <script>
+        // Memanggil fungsi updateProgressBar saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusElement = document.getElementById('statusElement');
+            const status = statusElement.innerText.trim();
+
+            updateProgressBar(status);
+        });
+
+        // Definisikan fungsi updateProgressBar
+        const updateProgressBar = (status) => {
+            const rounds = document.querySelectorAll(".round"),
+                progressBar = document.querySelector(".indicator");
+
+            const statusToStep = {
+                "Diajukan": 1,
+                "Sedang Diperiksa": 2,
+                "Dibatalkan": 2,
+                "Diteruskan ke Manajemen": 2,
+                "Menunggu Pencairan Dana oleh Program Service": 3,
+                "Menunggu Pencairan Dana oleh Admin Finance": 3,
+                "Ditolak": 3,
+                "Perlu Revisi": 3,
+                "Menunggu Laporan": 4,
+                "Selesai": 5
+            };
+
+            const currentStep = statusToStep[status];
+            rounds.forEach((round, index) => {
+                round.classList.toggle("active", index < currentStep);
+            });
+            progressBar.style.width = `${((currentStep - 1) / (rounds.length - 1)) * 100}%`;
+        };
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var pengajuanStatus = "${pengajuan.status}";
+            var revisiButton = document.getElementById('revisiButton');
+            var cancelButton = document.getElementById('cancelButton');
+
+            if (pengajuanStatus !== 'Diajukan' && pengajuanStatus !== 'Perlu Revisi') {
+                revisiButton.setAttribute('disabled', 'disabled');
+                cancelButton.setAttribute('disabled', 'disabled');
+            }
+        });
+    </script>
+
+    <script>
+        function toggleFullScreen(containerId) {
+            var container = document.getElementById(containerId);
+            if (!document.fullscreenElement) {
+                container.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById('submitLaporan').addEventListener('submit', function (event) {
+            var fileInput = document.querySelector('input[type="file"]');
+            var fileSize = fileInput.files[0].size; // Mendapatkan ukuran file dalam bytes
+
+            // Konversi ukuran file ke megabytes
+            var fileSizeInMB = fileSize / (1024 * 1024);
+
+            // Periksa apakah ukuran file melebihi 25MB
+            if (fileSizeInMB > 25) {
+                event.preventDefault(); // Mencegah pengiriman formulir jika ukuran file melebihi batas
+                document.getElementById('fileSizeError').style.display = 'block'; // Tampilkan pesan peringatan
+            }
+        });
+    </script>
+
+    <!-- jquery -->
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- count down -->
+    <script src="assets/js/jquery.countdown.js"></script>
+    <!-- isotope -->
+    <script src="assets/js/jquery.isotope-3.0.6.min.js"></script>
+    <!-- waypoints -->
+    <script src="assets/js/waypoints.js"></script>
+    <!-- owl carousel -->
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <!-- magnific popup -->
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <!-- mean menu -->
+    <script src="assets/js/jquery.meanmenu.min.js"></script>
+    <!-- sticker js -->
+    <script src="assets/js/sticker.js"></script>
+    <!-- main js -->
+    <script src="assets/js/main.js"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

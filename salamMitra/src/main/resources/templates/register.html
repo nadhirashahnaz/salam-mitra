@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Register | Salam Mitra</title>
+    <meta name="description" content="" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <!-- Page CSS -->
+    <!-- Page -->
+    <link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css" />
+    <!-- Helpers -->
+    <script src="../assets/vendor/js/helpers.js"></script>
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!-- Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="../assets/js/config.js"></script>
+    <style>
+        .text-danger {
+            color: red;
+        }
+        .form-text {
+            display: none;
+        }
+        .form-text.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Content -->
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner">
+                <!-- Register Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Logo -->
+                        <div class="app-brand justify-content-center">
+                            <img src="../assets/img/illustrations/Salam-setara-logo.png" width="100"/>
+                        </div>
+                        <div class="app-brand justify-content-center">
+                            <span class="app-brand-text demo text-body fw-bolder" style="text-transform: capitalize;">Salam Mitra</span>
+                        </div>
+                        <h4 class="mb-2">Selamat datang di Salam Mitra!</h4>
+                        <p class="mb-4">Buat akun baru Anda sekarang dan jadi mitra kami</p>
+
+                        <form id="formAuthentication" class="mb-3" th:action="@{/register}" th:object="${mitraDTO}" method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" th:field="*{username}" placeholder="Masukkan username" required autofocus />
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emailInput" name="email" th:field="*{email}" placeholder="Masukkan alamat email yang valid" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="namaPerusahaan" class="form-label">Nama Perusahaan</label>
+                                <input type="text" class="form-control" id="namaPerusahaan" name="namaPerusahaan" th:field="*{companyName}" placeholder="Masukkan nama perusahaan" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="lokasi" class="form-label">Lokasi</label>
+                                <input type="text" class="form-control" id="lokasi" name="lokasi" th:field="*{location}" placeholder="Masukkan lokasi Anda" required />
+                            </div>
+                            <div>
+                                <label for="number" class="form-label">Nomor Kontak</label>
+                                <input type="number" class="form-control" id="kontak" name="kontak" th:field="*{contact}" placeholder="Masukkan nomor yang dapat dihubungi" required />
+                            </div>
+                            <div id="kontakHelpText" class="form-text">Nomor harus diawali 08 dan terdiri dari 10-13 digit.</div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label mt-3" for="password">Kata Sandi</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="passwordField" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" th:field="*{password}" required />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                                <div id="passwordHelpText" class="form-text">Kata sandi harus minimal 8 karakter dan harus memiliki huruf besar, huruf kecil, dan angka.</div>
+                            </div>
+                            <button class="btn btn-primary d-grid w-100" type="submit" style="margin-top: 40px;">Buat Akun</button>
+                            <a class="btn btn-outline-secondary d-grid w-100" type="button" th:href="@{/}" style="margin-top: 10px;">Masuk sebagai tamu</a>
+                        </form>
+
+                        <p class="text-center">
+                            <span>Sudah memiliki akun?</span>
+                            <a href="login.html">
+                                <span>Masuk</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Register Card -->
+            </div>
+        </div>
+    </div>
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+    <!-- Vendors JS -->
+    <!-- Main JS -->
+    <script src="../assets/js/main.js"></script>
+    <!-- Page JS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("formAuthentication");
+
+            const contactInput = document.getElementById("kontak");
+            const contactHelpText = document.getElementById("kontakHelpText");
+
+            const passwordInput = document.getElementById("passwordField");
+            const passwordHelpText = document.getElementById("passwordHelpText");
+
+            contactInput.addEventListener("input", function() {
+                if (isValidContact(contactInput.value)) {
+                    contactHelpText.classList.remove("text-danger");
+                    contactHelpText.classList.remove("visible");
+                } else {
+                    contactHelpText.classList.add("text-danger");
+                    contactHelpText.classList.add("visible");
+                }
+            });
+
+            passwordInput.addEventListener("input", function() {
+                if (isValidPassword(passwordInput.value)) {
+                    passwordHelpText.classList.remove("text-danger");
+                    passwordHelpText.classList.remove("visible");
+                } else {
+                    passwordHelpText.classList.add("text-danger");
+                    passwordHelpText.classList.add("visible");
+                }
+            });
+
+            form.addEventListener("submit", function(event) {
+                event.preventDefault(); // Mencegah pengiriman formulir default
+
+                // Reset pesan kesalahan sebelumnya
+                contactHelpText.classList.remove("text-danger");
+                contactHelpText.classList.remove("visible");
+                passwordHelpText.classList.remove("text-danger");
+                passwordHelpText.classList.remove("visible");
+
+                // Lakukan validasi
+                if (!isValidContact(contactInput.value) || !isValidPassword(passwordInput.value)) {
+                    if (!isValidContact(contactInput.value)) {
+                        contactHelpText.classList.add("text-danger");
+                        contactHelpText.classList.add("visible");
+                    }
+                    if (!isValidPassword(passwordInput.value)) {
+                        passwordHelpText.classList.add("text-danger");
+                        passwordHelpText.classList.add("visible");
+                    }
+                    return;
+                }
+
+                // Jika semua valid, kirim formulir
+                form.submit();
+            });
+
+            function isValidPassword(password) {
+                return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,11}$/.test(password);
+            }
+
+            function isValidContact(contact) {
+                return /^08\d{8,11}$/.test(contact);
+            }
+        });
+    </script>
+</body>
+</html>

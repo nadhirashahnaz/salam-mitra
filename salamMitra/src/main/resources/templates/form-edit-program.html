@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Edit Program | Salam Mitra</title>
+    <style>
+        .program-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+  </head>
+<body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+        <div class="layout-container">
+            <div class="layout-page">
+                <nav th:replace="~{fragments/navbar :: navbar('home')}"></nav>
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="text-center" style="padding-top: 3%; padding-bottom: 3%;">
+                            <h1 class="display-3"><strong>Edit Program</strong></h1>
+                        </div>
+                        <div class="container">
+                            <div style="display: flex; justify-content: center;">
+                                <form id="formEditProgram" class="row g-3 card" style="padding: 50px; width: 50rem;" th:action="@{'/edit-program-' + ${program.id}}" th:object="${program}" method="POST" enctype="multipart/form-data">
+                                    <div id="alertForm" class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+                                    <input type="hidden" name="id" th:value="${program.id}" />
+        
+                                    <div>
+                                        <label for="judul" style="font-weight: bold;">Judul Program <sup>*</sup></label>
+                                        <input type="text" name="judul" id="judul" placeholder="Judul program" class="form-control" th:value="${program.judul}" oninput="return checkTitleLength()" required>
+                                        <small id="judulLengthMessage" style="color: red;"></small>
+                                    </div>
+                                    <div>
+                                        <label for="kategoriProgram" style="font-weight: bold;">Kategori <sup>*</sup></label>
+                                        <input name="kategoriProgram" id="kategoriProgram" th:value="${program.kategoriProgram}" class="form-control" readonly required>
+                                    </div>
+                                    <div>
+                                        <label for="kategoriAsnaf" style="font-weight: bold;">Kategori Asnaf <sup>*</sup></label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div th:each="kategori, iterStat : ${daftarKategoriAsnaf}" th:if="${iterStat.index % 2 == 0}">
+                                                    <input class="form-check-input" type="checkbox" style="margin-left: 10px;" th:id="${kategori}" th:name="kategoriAsnaf" th:value="${kategori}" th:checked="${program.kategoriAsnaf != null && program.kategoriAsnaf.contains(kategori)}"/>
+                                                    <label th:for="${kategori}" th:text="${kategori}"></label><br>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div th:each="kategori, iterStat : ${daftarKategoriAsnaf}" th:if="${iterStat.index % 2 != 0}">
+                                                    <input class="form-check-input" type="checkbox" style="margin-left: 10px;" th:id="${kategori}" th:name="kategoriAsnaf" th:value="${kategori}" th:checked="${program.kategoriAsnaf != null && program.kategoriAsnaf.contains(kategori)}"/>
+                                                    <label th:for="${kategori}" th:text="${kategori}"></label><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="provinsi" style="font-weight: bold;">Provinsi <sup>*</sup></label>
+                                        <input type="hidden" th:each="provinsi : ${program.provinsi}" name="provinsi" th:value="${provinsi}" />
+        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li th:each="provinsi,iterStat : ${program.provinsi}" th:if="${iterStat.index % 2 == 0}" th:text="${provinsi}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li th:each="provinsi,iterStat : ${program.provinsi}" th:if="${iterStat.index % 2 != 0}" th:text="${provinsi}"></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${not #lists.isEmpty(program.kabupatenKota)}">
+                                        <label for="kabupatenKota" style="font-weight: bold;">Kabupaten/Kota</label>
+                                        <input type="hidden" th:each="kabupatenKota : ${program.kabupatenKota}" name="kabupatenKota" th:value="${kabupatenKota}" />
+                                        <div class="row">                
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li th:each="kabupatenKota,iterStat : ${program.kabupatenKota}" th:if="${iterStat.index % 2 == 0}" th:text="${kabupatenKota}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li th:each="kabupatenKota,iterStat : ${program.kabupatenKota}" th:if="${iterStat.index % 2 != 0}" th:text="${kabupatenKota}"></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>                                                     
+                                    <div>
+                                        <label for="deskripsi" style="font-weight: bold;">Deskripsi Program <sup>*</sup></label>
+                                        <textarea type="text" name="deskripsi" id="deskripsi" placeholder="Deskripsi program" class="form-control" required th:text="${program.deskripsi}"></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="fotoProgram" style="font-weight: bold;">Ganti Foto Program</label>
+                                        <input type="file" name="foto" id="fotoProgram" class="form-control-file form-control" accept=".jpg, .png, .jpeg">
+                                        <small id="fotoError" style="color: red;"></small>
+                                        <br>
+                                        <div th:if="${program.fotoProgram != null}" >
+                                            <img th:src="'data:image/jpeg;base64,' + ${program.imageBase64}" alt="Program Image" class="program-image" />
+                                        </div>
+                                        <small class="form-text text-muted">Foto program saat ini</small>
+                                    </div>                            
+                                    <div class="text-center" style="margin-top: 50px;">
+                                        <button onclick="window.location.href='/program'" class="btn btn-danger" style="margin-right: 10px;">Batal</button>
+                                        <button class="btn btn-primary" type="submit" style="margin-left: 10px;">Simpan</button>                              
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Menangkap semua checkbox dengan nama "kategoriAsnaf"
+            var checkboxes = document.querySelectorAll('input[name="kategoriAsnaf"]');
+    
+            // Membuat event listener untuk setiap checkbox
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    validateKategoriAsnaf();
+                });
+            });
+    
+            // Membuat event listener untuk input judul
+            var titleInput = document.getElementById("judul");
+            titleInput.addEventListener('input', function() {
+                checkTitleLength();
+            });
+    
+            // Menambahkan event listener untuk submission form
+            document.getElementById('formEditProgram').addEventListener('submit', function(event) {
+                // Memanggil fungsi untuk memvalidasi kategori asnaf
+                validateKategoriAsnaf();
+    
+                // Jika ada pesan kesalahan kategori asnaf, hentikan pengiriman formulir
+                var errorDiv = document.getElementById('kategoriAsnafError');
+                if (errorDiv) {
+                    event.preventDefault();
+                }
+            });
+        });
+    
+        function validateKategoriAsnaf() {
+            var checkboxes = document.querySelectorAll('input[name="kategoriAsnaf"]:checked');
+            var errorDiv = document.getElementById('kategoriAsnafError');
+    
+            if (checkboxes.length === 0) {
+                // Tampilkan pesan kesalahan jika tidak ada checkbox terpilih
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.id = 'kategoriAsnafError';
+                    errorDiv.className = 'alert alert-danger mt-3';
+                    errorDiv.textContent = 'Pilih setidaknya satu kategori asnaf.';
+                    var formElement = document.getElementById('formEditProgram');
+                    formElement.insertBefore(errorDiv, formElement.firstChild);
+                    window.scrollTo(0, 0);
+                }
+            } else {
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+        }
+    
+        // Validasi panjang judul program
+        function checkTitleLength() {
+            var maxLength = 50;
+            var titleInput = document.getElementById("judul");
+            var titleLength = titleInput.value.length;
+            var messageElement = document.getElementById("judulLengthMessage");
+    
+            if (titleLength > maxLength) {
+                messageElement.textContent = "Judul program tidak boleh lebih dari 50 karakter.";
+            } else {
+                messageElement.textContent = "";
+                // Hapus pesan kesalahan jika judul program tidak melebihi 50 karakter
+                var alertDiv = document.getElementById('judulLengthError');
+                if (alertDiv) {
+                    alertDiv.remove();
+                }
+            }
+        }
+
+        // Menambahkan event listener untuk form submission
+        document.getElementById('formEditProgram').addEventListener('submit', function(event) {
+            // Validasi ukuran file gambar
+            var fileInput = document.getElementById('fotoProgram');
+            if (fileInput.files.length > 0) {
+                var fileSize = fileInput.files[0].size;
+                if (fileSize > 5 * 1024 * 1024) {
+                    document.getElementById('fotoError').textContent = 'Ukuran file gambar tidak boleh lebih dari 5MB.';
+                    document.getElementById('fotoError').style.display = 'block'; 
+                    event.preventDefault();
+                    return;
+                } else {
+                    document.getElementById('fotoError').style.display = 'none';
+                }
+            }
+
+            // Validasi panjang judul program
+            var titleInput = document.getElementById("judul");
+            var titleLength = titleInput.value.length;
+
+            if (titleLength > 50) {
+                // Tampilkan pesan kesalahan jika judul melebihi 50 karakter
+                var errorDiv = document.createElement('div');
+                errorDiv.id = 'judulLengthError';
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.textContent = 'Kurangi jumlah karakter pada judul program.';
+                var formElement = document.getElementById('formEditProgram');
+                formElement.insertBefore(errorDiv, formElement.firstChild);
+                removeAlerts();
+
+                event.preventDefault(); // Menghentikan pengiriman formulir
+                window.scrollTo(0, 0);
+            }
+        });
+
+    
+        // Fungsi untuk menghapus pesan kesalahan setelah 3000 ms
+        function removeAlerts() {
+            setTimeout(function () {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.remove();
+                });
+            }, 3000);
+        }
+    </script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

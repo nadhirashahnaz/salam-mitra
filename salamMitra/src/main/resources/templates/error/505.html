@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Error 404 | Salam Mitra</title>
+  </head>
+
+  <body>
+    <!-- Content -->
+
+    <!-- Error -->
+    <div class="container-xxl container-p-y">
+      <div class="misc-wrapper">
+        <h2 class="mb-2 mx-2">Error 403 :(</h2>
+        <p class="mb-4 mx-2">Oops! 😖 Server tidak mendukung versi protokol HTTP yang diminta.</p>
+        <a href="landing-page.html" class="btn btn-primary">Beranda</a>
+        <div class="mt-3">
+          <img
+            src="../assets/img/illustrations/505-error-img.png"
+            alt="page-misc-error-light"
+            width="500"
+            class="img-fluid"
+            data-app-dark-img="illustrations/page-misc-error-dark.png"
+            data-app-light-img="illustrations/page-misc-error-light.png"
+          />
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

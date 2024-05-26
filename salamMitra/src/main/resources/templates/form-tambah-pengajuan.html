@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Formulir Pengajuan | Salam Mitra</title>
+    <style>
+      .removeRow {
+        font-size: smaller;
+      }
+
+      .img-fluid {
+        max-width: 200px;
+        height: auto;
+      }
+      .img-fluid2 {
+        max-width: auto;
+        height: 200px;
+      }
+      .card.table-responsive {
+        text-align: center;
+        margin-top: 1rem;
+        margin-left: 0rem;
+        margin-right: 0rem;
+        margin-bottom: 1rem;
+      }
+      .table:not(.table-dark) th {
+        color: white;
+      }
+      .card {
+        margin-bottom: 2%;
+        margin-left: 4%;
+        margin-right: 4%;
+      }
+      .input-group-text {
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0rem;
+        border-bottom-right-radius: 0rem;
+        border-bottom-left-radius: 0.375rem;
+      }
+      .input-group {
+        flex-wrap: nowrap;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+      <div class="layout-container">
+        <div class="layout-page">
+          <nav th:replace="~{fragments/navbar :: navbar('pengajuan')}"></nav>
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div
+                class="text-center"
+                style="padding-top: 3%; padding-bottom: 3%"
+              >
+                <h1 class="display-3">
+                  <strong> Formulir Pengajuan Kerja Sama </strong>
+                </h1>
+              </div>
+
+              <form
+                th:action="@{/tambah-pengajuan}"
+                th:object="${listPengajuanKebutuhanDanaDTO}"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <div
+                  class="alert alert-danger"
+                  role="alert"
+                  th:text="${error}"
+                  th:if="${error}"
+                ></div>
+
+                <div id="form-total">
+                  <!-- SECTION 1 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4><strong>Informasi Umum</strong></h4>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="nama_mitra"
+                          >Nama Mitra*</label
+                        >
+                        <input
+                          type="text"
+                          name="nama_mitra"
+                          id="nama_mitra"
+                          placeholder="Nama Mitra"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.namaMitra}"
+                          required
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="kategori"
+                          >Kategori Program*</label
+                        >
+                        <select
+                          name="kategori"
+                          id="kategori"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.kategori}"
+                          required
+                        >
+                          <option value="">Pilih kategori</option>
+                          <option
+                            th:each="kategori : ${daftarKategori}"
+                            th:value="${kategori}"
+                            th:text="${kategori}"
+                          ></option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="nama_program"
+                          >Nama Program*</label
+                        >
+                        <select
+                          name="program"
+                          id="program"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.namaProgram}"
+                          required
+                        >
+                          <option value="">Pilih program</option>
+                        </select>
+                      </div>
+
+                      <div class="form-row">
+                        <div class="mb-3">
+                          <label class="form-label" for="nama_pic"
+                            >Nama Person In Charge (PIC)*</label
+                          >
+                          <input
+                            type="text"
+                            name="nama_pic"
+                            id="nama_pic"
+                            placeholder="Nama Person In Charge (PIC)"
+                            class="form-control"
+                            th:field="*{pengajuanDTO.namaPIC}"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="kontak_pic"
+                          >Kontak Person In Charge (PIC)*</label
+                        >
+                        <input
+                          type="number"
+                          name="kontak_pic"
+                          id="kontak_pic"
+                          placeholder="08**********"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.kontakPIC}"
+                          required
+                          oninput="validatePhoneNumber(this)"
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="alamat">Alamat*</label>
+                        <input
+                          type="text"
+                          name="alamat"
+                          id="alamat"
+                          placeholder="Alamat Kantor atau Rumah"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.alamatKantor}"
+                          required
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="ktpPIC"
+                          >KTP Person In Charge (PIC)*</label
+                        >
+                        <br>
+                        <img
+                          src="/assets/img/ktp.png"
+                          alt="Placeholder"
+                          class="img-fluid"
+                        />
+                        <input
+                          type="file"
+                          name="ktpPIC"
+                          accept=".jpg, .png, .jpeg"
+                          class="form-control-file form-control"
+                          required
+                        />
+                        <small class="form-text text-muted"
+                          >Ukuran file maksimal: 25MB</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 2 -->
+
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Kebutuhan Dana </strong>
+                      </h4>
+                    </div>
+
+                    <div class="card-body">
+                      <button type="button" class="btn btn-primary" id="addRow">
+                        + Tambah Kebutuhan Dana
+                      </button>
+                      <div class="card table-responsive">
+                        <table
+                          class="datatables-basic table table-bordered"
+                          id="dataTable"
+                        >
+                          <thead>
+                            <tr class="table-dark">
+                              <th scope="col">#</th>
+                              <th scope="col">Asnaf</th>
+                              <th scope="col">Jumlah Penerima</th>
+                              <th scope="col">Pilar</th>
+                              <th scope="col">Jenis Bantuan</th>
+                              <th scope="col">Jumlah Dana</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              th:each="kDana, iterationStatus : *{listKebutuhanDanaDTO}"
+                            >
+                              <td>
+                                <span
+                                  th:text="${iterationStatus.index + 1}"
+                                ></span>
+                              </td>
+                              <td>
+                                <select
+                                  id="asnafDropdown"
+                                  th:field="*{listKebutuhanDanaDTO[__${iterationStatus.index}__].asnaf}"
+                                  class="form-control"
+                                  style="width: 130px; font-size: small"
+                                >
+                                  <option value="">Pilih asnaf</option>
+                                </select>
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  placeholder="Jumlah Penerima"
+                                  th:field="*{listKebutuhanDanaDTO[__${iterationStatus.index}__].jumlahPenerima}"
+                                  class="form-control"
+                                  style="width: 80px"
+                                  required
+                                  min="1"
+                                />
+                              </td>
+                              <td>
+                                <select
+                                  th:field="*{listKebutuhanDanaDTO[__${iterationStatus.index}__].pilar}"
+                                  class="form-control"
+                                  style="width: 160px; font-size: small"
+                                >
+                                  <option value="" disabled selected>
+                                    Pilih pilar
+                                  </option>
+                                  <option value="Pendidikan">Pendidikan</option>
+                                  <option value="Kesehatan">Kesehatan</option>
+                                  <option value="Ekonomi-Pemberdayaan">
+                                    Ekonomi-Pemberdayaan
+                                  </option>
+                                  <option value="Dakwah-Advokasi">
+                                    Dakwah-Advokasi
+                                  </option>
+                                  <option value="Bantuan Sosial">
+                                    Bantuan Sosial
+                                  </option>
+                                </select>
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  placeholder="Jenis Bantuan"
+                                  th:field="*{listKebutuhanDanaDTO[__${iterationStatus.index}__].jenisBantuan}"
+                                  class="form-control"
+                                  required
+                                />
+                              </td>
+                              <td>
+                                <div class="input-group">
+                                  <span class="input-group-text">Rp</span>
+                                  <input
+                                    type="number"
+                                    placeholder="Jumlah Dana"
+                                    th:field="*{listKebutuhanDanaDTO[__${iterationStatus.index}__].jumlahDana}"
+                                    class="form-control"
+                                    style="width: 150px"
+                                    required
+                                    min="1"
+                                  />
+                                </div>
+                              </td>
+                              <td th:unless="${iterationStatus.index == 0}">
+                                <button
+                                  type="button"
+                                  class="btn rounded-pill btn-danger removeRow"
+                                >
+                                  <span
+                                    class="tf-icons bx bxs-trash-alt"
+                                  ></span>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div class="mb-3">
+                        <label
+                          class="form-label"
+                          for="jumlah_kebutuhan"
+                          id="label_jumlah_kebutuhan"
+                          >Jumlah Kebutuhan Operasional :
+                        </label>
+                        <label class="form-label" for="nominal_kebutuhan"
+                          >Nominal Kebutuhan Dana :
+                        </label>
+                        <div class="input-group">
+                          <span class="input-group-text">Rp</span>
+                          <span id="nominal_kebutuhan" class="form-control"
+                            >0</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 2.5 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Tujuan Pencairan Dana </strong>
+                      </h4>
+                      <p class="info">
+                        Mohon pastikan bahwa informasi bank, nama pemilik, dan
+                        nomor rekening yang Anda berikan adalah akurat.
+                        Kesalahan dalam pengisian data dapat berdampak pada
+                        proses persetujuan pengajuan kerja sama Anda.
+                      </p>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="bank">Bank*</label>
+                        <select
+                          name="bank"
+                          id="bank"
+                          class="form-control"
+                          onchange="checkBank(this);"
+                          th:field="*{pengajuanDTO.bank}"
+                          required
+                        >
+                          <option value="">Pilih bank</option>
+                          <option value="Bank Central Asia (BCA)">
+                            Bank Central Asia (BCA)
+                          </option>
+                          <option value="Bank CIMB Niaga">
+                            Bank CIMB Niaga
+                          </option>
+                          <option value="Bank Mandiri">Bank Mandiri</option>
+                          <option value="Bank Mega">Bank Mega</option>
+                          <option value="Bank Negara Indonesia (BNI)">
+                            Bank Negara Indonesia (BNI)
+                          </option>
+                          <option value="Bank Rakyat Indonesia (BRI)">
+                            Bank Rakyat Indonesia (BRI)
+                          </option>
+                          <option value="Bank Tabungan Negara (BTN)">
+                            Bank Tabungan Negara (BTN)
+                          </option>
+                          <option value="Bank Syariah Mandiri">
+                            Bank Syariah Mandiri
+                          </option>
+                          <!-- Tambahkan opsi untuk bank lainnya -->
+                          <option value="Lainnya">Lainnya</option>
+                        </select>
+                        <input
+                          type="text"
+                          id="bank_lainnya"
+                          name="bank_lainnya"
+                          placeholder="Masukkan Nama Bank Anda"
+                          class="form-control"
+                          style="display: none"
+                          margin-bottom:
+                          20px;
+                          oninput="replaceDropdownValue()"
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="nama_pemilik_rekening"
+                          >Nama Pemilik Rekening*</label
+                        >
+                        <input
+                          type="text"
+                          name="nama_pemilik_rekening"
+                          id="nama_pemilik_rekening"
+                          placeholder="Nama Pemilik Rekening"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.namaPemilikRekening}"
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="nomor_rekening"
+                          >No. Rekening*</label
+                        >
+                        <input
+                          type="number"
+                          name="nomor_rekening"
+                          id="nomor_rekening"
+                          placeholder="Nomor Rekening"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.nomorRekening}"
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="bukuTabungan"
+                          >Foto Buku Tabungan/M-Banking*</label
+                        >
+                        <br>
+                        <img
+                          src="/assets/img/buku-rekening.png"
+                          alt="Placeholder"
+                          class="img-fluid"
+                        />
+                        <img
+                          src="/assets/img/m-banking.png"
+                          alt="Placeholder"
+                          class="img-fluid2"
+                        />
+                        <input
+                          type="file"
+                          name="bukuTabungan"
+                          accept=".jpg, .png, .jpeg"
+                          class="form-control-file form-control"
+                          required
+                        />
+                        <small class="form-text text-muted"
+                          >Ukuran file maksimal: 25MB</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 3 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Dokumen </strong>
+                      </h4>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="rab"
+                          >Rancangan Anggaran Biaya (RAB)*</label
+                        >
+                        <input
+                          type="file"
+                          name="rab"
+                          accept=".pdf"
+                          class="form-control-file form-control"
+                          required
+                        />
+                        <small class="form-text text-muted"
+                          >Ukuran file maksimal: 25MB</small
+                        >
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="dokumen"
+                          >Dokumen Perizinan*</label
+                        >
+                        <input
+                          type="file"
+                          name="dokumen"
+                          accept=".pdf"
+                          class="form-control-file form-control"
+                          required
+                        />
+                        <small class="form-text text-muted"
+                          >Ukuran file maksimal: 25MB</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 4 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Tanggal Pelaksanaan & Laporan </strong>
+                      </h4>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="tanggal_mulai"
+                          >Tanggal Mulai Implementasi*</label
+                        >
+                        <input
+                          type="date"
+                          name="tanggal_mulai"
+                          id="tanggal_mulai"
+                          placeholder="Tanggal Mulai Implementasi"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.tanggalMulai}"
+                          required
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="tanggal_selesai"
+                          >Tanggal Selesai Implementasi*</label
+                        >
+                        <!-- Atribut 'min' diatur ke tanggal mulai menggunakan JavaScript -->
+                        <input
+                          type="date"
+                          name="tanggal_selesai"
+                          id="tanggal_selesai"
+                          placeholder="Tanggal Selesai Implementasi"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.tanggalSelesai}"
+                          required
+                        />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="tanggal_laporan"
+                          >Tanggal Selesai Laporan*</label
+                        >
+                        <!-- Atribut 'min' diatur ke tanggal mulai menggunakan JavaScript -->
+                        <input
+                          type="date"
+                          name="tanggal_laporan"
+                          id="tanggal_laporan"
+                          placeholder="Tanggal Selesai Laporan"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.tanggalLaporan}"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 5 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Lokasi Penyaluran Dana </strong>
+                      </h4>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="provinsi"
+                          >Provinsi*</label
+                        >
+                        <!-- Dropdown untuk provinsi -->
+                        <select
+                          name="provinsi"
+                          id="provinsi"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.provinsi}"
+                          required
+                        >
+                          <option value="">Pilih provinsi</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="kabupatenKota"
+                          >Kabupaten/Kota*</label
+                        >
+                        <select
+                          name="kabupatenKota"
+                          id="kabupatenKota"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.kabupatenKota}"
+                          required
+                        >
+                          <option value="">Pilih kabupaten/kota</option>
+                          <!-- Tambahkan atribut "value" kosong di sini -->
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label" for="kecamatan"
+                          >Kecamatan*</label
+                        >
+                        <select
+                          name="kecamatan"
+                          id="kecamatan"
+                          class="form-control"
+                          th:field="*{pengajuanDTO.kecamatan}"
+                          required
+                        >
+                          <option value="">Pilih kecamatan</option>
+                          <!-- Tambahkan atribut "value" kosong di sini -->
+                        </select>
+                      </div>
+
+                      <div class="form-row">
+                        <div class="mb-3">
+                          <label class="form-label" for="alamatLengkap"
+                            >Alamat Lengkap*</label
+                          >
+                          <input
+                            type="text"
+                            name="alamatLengkap"
+                            id="alamatLengkap"
+                            placeholder="Alamat Lengkap"
+                            class="form-control"
+                            th:field="*{pengajuanDTO.alamatLengkap}"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION 6 -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>
+                        <strong> Privasi & Persetujuan </strong>
+                      </h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <p>
+                          Dengan menggunakan layanan kami, Anda menyetujui
+                          pengumpulan, penggunaan, dan pengungkapan informasi
+                          yang terkait dengan layanan tersebut sesuai dengan
+                          Kebijakan Privasi kami. Kami menjamin bahwa informasi
+                          Anda akan diolah dengan keamanan tertinggi dan tidak
+                          akan disalahgunakan. Dengan menekan tombol "Saya
+                          setuju", Anda menyatakan bahwa Anda telah membaca,
+                          memahami, dan menyetujui Kebijakan Privasi kami tanpa
+                          keberatan apapun. Jika Anda memiliki pertanyaan lebih
+                          lanjut tentang privasi atau penggunaan data Anda,
+                          jangan ragu untuk menghubungi kami melalui
+                          propensist@gmail.com.
+                        </p>
+
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="defaultCheck1"
+                            required
+                          />
+                          <label class="form-check-label" for="defaultCheck1">
+                            Saya telah membaca dan memahami informasi di atas.
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-center mb-3">
+                    <button
+                      onclick="window.location.href='/pengajuan'"
+                      class="btn btn-danger"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      class="btn btn-primary"
+                      type="submit"
+                      style="width: 110px"
+                    >
+                      Simpan
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      function validatePhoneNumber(input) {
+        // Hapus karakter selain angka
+        var phoneNumber = input.value.replace(/\D/g, "");
+
+        // Pastikan awalan nomor telepon adalah "08"
+        if (!phoneNumber.startsWith("08")) {
+          input.setCustomValidity("Nomor telepon tidak valid");
+        } else {
+          // Pastikan panjang nomor telepon antara 11 dan 13 digit
+          if (phoneNumber.length < 11 || phoneNumber.length > 13) {
+            input.setCustomValidity("Nomor telepon tidak valid");
+          } else {
+            input.setCustomValidity("");
+          }
+        }
+      }
+      input.value = "0" + phoneNumber;
+    </script>
+    <script>
+      function checkBank(select) {
+        var selectedOption = select.options[select.selectedIndex].value;
+        var bankLainnyaInput = document.getElementById("bank_lainnya");
+        if (selectedOption === "Lainnya") {
+          bankLainnyaInput.style.display = "block";
+          bankLainnyaInput.required = true;
+        } else {
+          bankLainnyaInput.style.display = "none";
+          bankLainnyaInput.required = false;
+        }
+      }
+
+      function replaceDropdownValue() {
+        var dropdown = document.getElementById("bank");
+        var selectedOption = dropdown.options[dropdown.selectedIndex].value;
+        var bankLainnyaInput = document.getElementById("bank_lainnya");
+        if (selectedOption === "Lainnya") {
+          // Ambil nilai dari input teks 'bank_lainnya'
+          var bankLainnyaValue = bankLainnyaInput.value;
+          // Ganti nilai dropdown dengan nilai dari input teks
+          dropdown.options[dropdown.selectedIndex].value = bankLainnyaValue;
+        }
+      }
+    </script>
+    <script>
+      // Tangani perubahan pada dropdown "Provinsi" dan "Nama Program"
+      document
+        .getElementById("provinsi")
+        .addEventListener("change", updateKabKotaOptions);
+      document
+        .getElementById("program")
+        .addEventListener("change", updateKabKotaOptions);
+
+      function updateKabKotaOptions() {
+        var provinsi = document.getElementById("provinsi").value;
+        var namaProgram = document.getElementById("program").value;
+
+        // Buat permintaan ke endpoint untuk mendapatkan daftar kabupaten/kota berdasarkan provinsi dan nama program
+        fetch(
+          "/getKabKotaByProvinsiAndNamaProgram?provinsi=" +
+            encodeURIComponent(provinsi) +
+            "&namaProgram=" +
+            encodeURIComponent(namaProgram)
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            // Bersihkan dropdown "Kabupaten/Kota"
+            var kabupatenKotaDropdown =
+              document.getElementById("kabupatenKota");
+            kabupatenKotaDropdown.innerHTML =
+              '<option value="">Pilih kabupaten/kota</option>';
+
+            // Isi dropdown "Kabupaten/Kota" dengan opsi yang diterima dari server
+            data.forEach(function (kabKota) {
+              var option = document.createElement("option");
+              option.value = kabKota;
+              option.text = kabKota;
+              kabupatenKotaDropdown.appendChild(option);
+            });
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      // Panggil fungsi untuk mengisi dropdown "Kabupaten/Kota" saat halaman dimuat
+      updateKabKotaOptions();
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        $("#provinsi, #kabupatenKota").change(function () {
+          var provinsi = $("#provinsi").val();
+          var kabupatenKota = $("#kabupatenKota").val(); // Ubah nama variabel kabupaten menjadi kabupatenKota
+
+          // Mengirimkan permintaan AJAX ke server untuk mendapatkan daftar kecamatan berdasarkan kabupaten/kota yang dipilih
+          $.get(
+            "/getKecamatanByProvinsiKabupatenKota",
+            { provinsi: provinsi, kabupatenKota: kabupatenKota },
+            function (data) {
+              // Menghapus opsi yang sudah ada pada dropdown kecamatan
+              $("#kecamatan").empty();
+
+              // Menambahkan opsi "--Pilih Kecamatan--" di dropdown kecamatan jika belum ada kabupaten/kota yang dipilih
+              if (kabupatenKota === "") {
+                $("#kecamatan").append(
+                  $("<option>").text("Pilih kecamatan").attr("value", "")
+                );
+              }
+
+              // Menambahkan opsi-opsi baru berdasarkan data yang diterima dari server
+              $.each(data, function (index, kecamatan) {
+                $("#kecamatan").append(
+                  $("<option>").text(kecamatan).attr("value", kecamatan)
+                );
+              });
+            }
+          );
+        });
+      });
+    </script>
+    <script>
+      // Mendapatkan elemen input tanggal mulai, tanggal selesai implementasi, dan tanggal selesai laporan
+      var tanggalMulaiInput = document.getElementById("tanggal_mulai");
+      var tanggalSelesaiInput = document.getElementById("tanggal_selesai");
+      var tanggalLaporanInput = document.getElementById("tanggal_laporan");
+
+      // Menambahkan event listener untuk memvalidasi tanggal selesai implementasi saat nilai tanggal mulai berubah
+      tanggalMulaiInput.addEventListener("change", function () {
+        // Mendapatkan nilai tanggal mulai
+        var tanggalMulai = new Date(tanggalMulaiInput.value);
+        // Mengatur atribut 'min' pada tanggal selesai implementasi dan tanggal selesai laporan ke tanggal mulai
+        tanggalSelesaiInput.min = tanggalMulaiInput.value;
+        tanggalLaporanInput.min = tanggalMulaiInput.value;
+        // Reset nilai tanggal selesai implementasi dan tanggal selesai laporan jika sebelum tanggal mulai
+        if (new Date(tanggalSelesaiInput.value) < tanggalMulai) {
+          tanggalSelesaiInput.value = tanggalMulaiInput.value;
+        }
+        if (new Date(tanggalLaporanInput.value) < tanggalMulai) {
+          tanggalLaporanInput.value = tanggalMulaiInput.value;
+        }
+      });
+
+      // Menambahkan event listener untuk memvalidasi tanggal selesai laporan saat nilai tanggal selesai implementasi berubah
+      tanggalSelesaiInput.addEventListener("change", function () {
+        // Mendapatkan nilai tanggal selesai implementasi
+        var tanggalSelesai = new Date(tanggalSelesaiInput.value);
+        // Mengatur atribut 'min' pada tanggal selesai laporan ke tanggal selesai implementasi
+        tanggalLaporanInput.min = tanggalSelesaiInput.value;
+        // Reset nilai tanggal selesai laporan jika sebelum tanggal selesai implementasi
+        if (new Date(tanggalLaporanInput.value) < tanggalSelesai) {
+          tanggalLaporanInput.value = tanggalSelesaiInput.value;
+        }
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Fungsi untuk menambahkan baris kebutuhan dana
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Menghitung total nominal kebutuhan dana saat halaman dimuat
+        updateTotal();
+
+        // Menghitung total nominal kebutuhan dana saat ada perubahan pada input jumlah dana di setiap baris
+        $(document).on(
+          "input",
+          "input[name^='listKebutuhanDanaDTO'][name$='jumlahDana']",
+          function () {
+            updateTotal();
+          }
+        );
+
+        // Fungsi untuk menghitung dan memperbarui total nominal kebutuhan dana
+        function updateTotal() {
+          var total = 0;
+          $("input[name^='listKebutuhanDanaDTO'][name$='jumlahDana']").each(
+            function () {
+              var value = parseFloat($(this).val());
+              if (!isNaN(value)) {
+                total += value;
+              }
+            }
+          );
+          $("#nominal_kebutuhan").text(total.toLocaleString());
+        }
+
+        // Menghitung ulang total nominal kebutuhan dana saat baris dihapus
+        $(document).on("click", ".removeRow", function () {
+          $(this).closest("tr").remove();
+          updateTotal();
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Memastikan dropdown ASNaf pada baris pertama terisi saat halaman dimuat
+        populateAsnafDropdown(0);
+
+        // Ketika nama program berubah, isi ulang dropdown ASNaf pada baris pertama
+        $("#program").change(function () {
+          populateAsnafDropdown(0);
+        });
+        addRow();
+
+        // Fungsi untuk menambahkan baris kebutuhan dana
+        function addRow() {
+          var rowCount = $("#dataTable tbody tr").length;
+          var newRow =
+            "<tr>" +
+            "<td>" +
+            (rowCount + 1) +
+            "</td>" +
+            "<td>" +
+            '<select id="asnafDropdown' +
+            rowCount +
+            '" name="listKebutuhanDanaDTO[' +
+            rowCount +
+            '].asnaf" class="form-control asnafDropdown" style="width: 130px; font-size: small;" required>' +
+            '<option value="" disabled selected>Pilih asnaf</option>' +
+            "</select>" +
+            "</td>" +
+            '<td><input type="number" name="listKebutuhanDanaDTO[' +
+            rowCount +
+            '].jumlahPenerima" class="form-control" style="width: 80px; required min="1"></td>' +
+            '<td><select name="listKebutuhanDanaDTO[' +
+            rowCount +
+            '].pilar" class="form-control" style="width: 160px; font-size: small;" required>' +
+            '<option value="" disabled selected>Pilih pilar</option>' +
+            '<option value="Pendidikan">Pendidikan</option>' +
+            '<option value="Kesehatan">Kesehatan</option>' +
+            '<option value="Ekonomi-Pemberdayaan">Ekonomi-Pemberdayaan</option>' +
+            '<option value="Dakwah-Advokasi">Dakwah-Advokasi</option>' +
+            '<option value="Bantuan Sosial">Bantuan Sosial</option>' +
+            "</select></td>" +
+            '<td><input type="text" name="listKebutuhanDanaDTO[' +
+            rowCount +
+            '].jenisBantuan"  class="form-control"  required></td>' +
+            "<td>" +
+            '<div class="input-group">' +
+            '<span class="input-group-prepend">' +
+            '<span class="input-group-text">Rp</span>' +
+            "</span>" +
+            '<input type="number" name="listKebutuhanDanaDTO[' +
+            rowCount +
+            '].jumlahDana" class="form-control" style="width: 150px; required min="1">' +
+            "</div>" +
+            "</td>" +
+            '<td th:unless="${iterationStatus.index == 0}">' +
+            '<button type="button" class="btn rounded-pill btn-danger removeRow"><span class="tf-icons bx bxs-trash-alt"></span></button>' +
+            "</td>" +
+            "</tr>";
+          $("#dataTable tbody").append(newRow);
+          if (rowCount === 0) {
+            $("#dataTable tbody tr:first-child .removeRow").hide();
+          }
+          // Memastikan dropdown ASNaf pada baris baru terisi
+          populateAsnafDropdown(rowCount);
+          // Disable tombol hapus jika hanya ada satu baris
+          if ($("#dataTable tbody tr").length === 1) {
+            $("#dataTable tbody tr .removeRow").prop("disabled", true);
+          }
+          // Update jumlah kebutuhan operasional label
+          updateJumlahKebutuhanOperasional();
+        }
+
+        // Ketika tombol tambah baris ditekan, tambahkan baris dan isi dropdown ASNaf
+        $("#addRow").click(function () {
+          addRow();
+        });
+
+        // Fungsi untuk mengisi dropdown ASNaf berdasarkan nama program pada baris tertentu
+        function populateAsnafDropdown(rowIndex) {
+          var namaProgram = $("#program").val();
+          var asnafDropdown = $("#asnafDropdown" + rowIndex);
+
+          // Bersihkan dropdown "ASNaf"
+          asnafDropdown.empty();
+
+          // Jika nama program tidak kosong, kirim permintaan ke endpoint untuk mendapatkan ASNaf
+          if (namaProgram !== "") {
+            fetch(
+              "/getAsnafByNamaProgram?namaProgram=" +
+                encodeURIComponent(namaProgram)
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                // Isi dropdown "ASNaf" dengan ASNaf yang diterima dari server
+                data.forEach(function (asnaf) {
+                  asnafDropdown.append(
+                    $("<option></option>").attr("value", asnaf).text(asnaf)
+                  );
+                });
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        }
+
+        // Fungsi untuk memperbarui label jumlah kebutuhan operasional
+        function updateJumlahKebutuhanOperasional() {
+          var rowCount = $("#dataTable tbody tr").length;
+          $("#label_jumlah_kebutuhan").text(
+            "Jumlah Kebutuhan Operasional: " + rowCount
+          );
+        }
+
+        // Remove row when delete button is clicked (starting from the second row)
+        $(document).on("click", ".removeRow", function () {
+          $(this).closest("tr").remove();
+          // Enable delete button if more than one row exists
+          if ($("#dataTable tbody tr").length > 1) {
+            $("#dataTable tbody tr .removeRow").prop("disabled", false);
+          }
+          // Update jumlah kebutuhan operasional label after removing row
+          updateJumlahKebutuhanOperasional();
+        });
+
+        // Submit form
+        $("#pengajuanForm").submit(function (event) {
+          event.preventDefault();
+          // Lakukan submit form ke server di sini
+          console.log("Form submitted");
+        });
+      });
+    </script>
+
+    <script type="text/javascript">
+      document
+        .getElementById("kategori")
+        .addEventListener("change", function () {
+          var selectedKategori = this.value;
+          var programDropdown = document.getElementById("program");
+
+          // Reset dropdown "Nama Program"
+          programDropdown.innerHTML =
+            '<option value="">Pilih program</option>';
+
+          // Jika kategori yang dipilih tidak kosong, kirim permintaan ke endpoint REST
+          if (selectedKategori !== "") {
+            fetch("/getNamaProgramByKategori?kategori=" + selectedKategori)
+              .then((response) => response.json())
+              .then((data) => {
+                // Isi dropdown "Nama Program" dengan nama program yang diterima dari server
+                data.forEach(function (namaProgram) {
+                  var option = document.createElement("option");
+                  option.value = namaProgram;
+                  option.text = namaProgram;
+                  programDropdown.appendChild(option);
+                });
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        });
+    </script>
+    <script type="text/javascript">
+      // Tangani perubahan pada dropdown "Nama Program"
+      document
+        .getElementById("program")
+        .addEventListener("change", function () {
+          var namaProgram = this.value;
+          var asnafDropdown = document.getElementById("asnafDropdown");
+
+          // Bersihkan dropdown "ASNaf"
+          asnafDropdown.innerHTML = '<option value="">Pilih asnaf</option>';
+
+          // Jika nama program tidak kosong, kirim permintaan ke endpoint untuk mendapatkan ASNaf
+          if (namaProgram !== "") {
+            fetch(
+              "/getAsnafByNamaProgram?namaProgram=" +
+                encodeURIComponent(namaProgram)
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                // Isi dropdown "ASNaf" dengan ASNaf yang diterima dari server
+                data.forEach(function (asnaf) {
+                  var option = document.createElement("option");
+                  option.value = asnaf;
+                  option.text = asnaf;
+                  asnafDropdown.appendChild(option);
+                });
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        });
+    </script>
+
+    <script>
+      // Tangani perubahan pada dropdown "Nama Program"
+      document
+        .getElementById("program")
+        .addEventListener("change", function () {
+          var namaProgram = this.value;
+          var provinsiDropdown = document.getElementById("provinsi");
+
+          // Bersihkan dropdown "Provinsi"
+          provinsiDropdown.innerHTML =
+            '<option value="">Pilih provinsi</option>';
+
+          // Jika nama program tidak kosong, kirim permintaan ke endpoint untuk mendapatkan daftar provinsi
+          if (namaProgram !== "") {
+            fetch(
+              "/getDaftarProvinsiByNamaProgram?namaProgram=" +
+                encodeURIComponent(namaProgram)
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                // Isi dropdown "Provinsi" dengan daftar provinsi yang diterima dari server
+                data.forEach(function (provinsi) {
+                  var option = document.createElement("option");
+                  option.value = provinsi;
+                  option.text = provinsi;
+                  provinsiDropdown.appendChild(option);
+                });
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var maxFileSizeMB = 25; // Ukuran maksimal file dalam MB
+
+        var fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(function (input) {
+          input.addEventListener("change", function () {
+            var file = this.files[0];
+            var fileSizeMB = file.size / (1024 * 1024); // Konversi ukuran file ke MB
+
+            if (fileSizeMB > maxFileSizeMB) {
+              alert(
+                "Ukuran file tidak boleh lebih besar dari " +
+                  maxFileSizeMB +
+                  "MB"
+              );
+              this.value = ""; // Kosongkan nilai input file
+            }
+          });
+        });
+      });
+    </script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

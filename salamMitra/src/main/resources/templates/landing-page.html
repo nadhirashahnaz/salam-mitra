@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: fragment}" th:remove="tag"></object>
+    <title>Beranda | Salam Mitra</title>
+    <link rel="stylesheet" href="../../assets/vendor/css/pages/front-page-landing.css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/pages/front-page.css" />
+    <style>
+        .border-label-purple {
+            border-color: #a2a3ff;
+            border-width: 2px;
+        }
+
+        .border-label-green {
+            border-color: #b5ff8d;
+            border-width: 2px;
+        }
+
+        .border-label-blue {
+            border-color: #77e6ff; 
+            border-width: 2px;
+        }
+
+        .border-label-orange {
+            border-color: #ffcd68; 
+            border-width: 2px;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 300px; /* Adjust the height as per your requirement */
+            object-fit: cover; /* Ensures the image covers the entire space allocated */
+        }
+
+        .description-program {
+            height: 70px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit to three lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis for overflow text */
+        }
+
+        .hero-text-carousel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-text-box {
+            flex: 1;
+            text-align: left;
+        }
+
+        .carousel-container {
+            flex: 1;
+            max-width: 40%; /* Occupy full width */
+    		margin: auto;
+        }
+
+        .landing-hero-btn {
+            text-align: left;
+        }
+
+		@media (max-width: 767px) {
+			.hero-text-carousel {
+				flex-direction: column; 
+				align-items: center; 
+			}
+
+			.carousel-container {
+				max-width: 100%;
+				margin-top: 20px;
+			}
+		}
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar('home')}"></nav>
+
+    <div id="landingHero" class="section-py landing-hero position-relative">
+        <img src="../../assets/img/illustrations/hero-bg.png" alt="hero background" class="position-absolute top-0 start-50 translate-middle-x object-fit-contain w-100 h-100" data-speed="1" />
+        <div class="container">
+            <div class="hero-text-carousel">
+                <div class="hero-text-box">
+                    <h1 class="text-primary hero-title display-4 fw-bold">Bersama ciptakan dampak lebih luas</h1>
+                    <h2 class="hero-sub-title h6 mb-4 pb-1">
+                        Jadi bagian untuk wujudkan masyarakat<br class="d-none d-lg-block" />
+                        madani yang lebih setara!
+                    </h2>
+                    <div class="landing-hero-btn d-inline-block position-relative">
+                        <a href="/tambah-pengajuan" class="btn btn-primary">Ajukan kerja sama</a>
+                    </div>
+                </div>
+                <div id="carouselExample" class="carousel slide carousel-container" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="../../assets/img/illustrations/carousel-1.png" alt="First slide" />
+                        </div>
+                        <div class="carousel-item">
+                            <img class="d-block w-100"  src="../../assets/img/illustrations/carousel-2.png"alt="Second slide" />
+                        </div>
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="../../assets/img/illustrations/carousel-3.png" alt="Third slide" />
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExample" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExample" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fun facts: Start -->
+    <section id="landingFunFacts" class="section-py landing-fun-facts">
+        <h3 class="text-center mb-1">Salam Setara Foundation</h3>
+        <p class="text-center mb-3 mb-md-5 pb-3">
+            Hadir dengan niat dapat ikut serta dalam upaya mengurangi kemiskinan, 
+            kesenjangan, dan kerentanan yang ada di masyarakat.
+        </p>
+        <div class="container">
+            <div class="row gy-3">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card border-label-purple shadow-none">
+                        <div class="card-body text-center">
+                            <img src="../../assets/img/front-pages/icons/laptop.png" alt="laptop" class="mb-2" />
+                            <h5 class="h2 mb-1">5</h5>
+                            <p class="fw-medium mb-0">
+                                Kategori Program<br />
+                                Berkelanjutan
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card border-label-green shadow-none">
+                        <div class="card-body text-center">
+                            <img src="../../assets/img/front-pages/icons/user-success.png" alt="laptop" class="mb-2" />
+                            <h5 class="h2 mb-1">250</h5>
+                            <p class="fw-medium mb-0">
+                                Penerima Modal<br />
+                                Usaha
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card border-label-blue shadow-none">
+                        <div class="card-body text-center">
+                            <img src="../../assets/img/front-pages/icons/diamond-info.png" alt="laptop" class="mb-2" />
+                            <h5 class="h2 mb-1">1.000</h5>
+                            <p class="fw-medium mb-0">
+                                Peternak<br />
+                                Berdaya
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card border-label-orange shadow-none">
+                        <div class="card-body text-center">
+                            <img src="../../assets/img/front-pages/icons/check-warning.png" alt="laptop" class="mb-2" />
+                            <h5 class="h2 mb-1">15.000</h5>
+                            <p class="fw-medium mb-0">
+                                Penerima Bantuan<br />
+                                Sosial
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-3 mb-5">
+        <h3 class="text-center mb-1">Daftar Program</h3>
+        <p class="text-center mb-3 mb-md-5 pb-3">
+            Telusuri berbagai jenis program kami dan ajukan kerja sama.
+        </p>
+
+        <div class="row row row-cols-1 row-cols-md-3 g-4" style="margin-top: 20px; margin-left: 30px; margin-right: 30px;">
+            <!-- Iterate over programs -->
+            <div th:each="program : ${listProgram}">
+                <div class="col">
+                    <div class="card h-100">
+                        <img class="card-img-top" th:if="${program.fotoProgram != null}" th:src="'data:image/jpeg;base64,' + ${program.imageBase64}" alt="Program Image">
+                        <img class="card-img-top" th:if="${program.fotoProgram == null}" src="/assets/img/illustrations/placeholder-program.png" alt="Placeholder">
+                        <div class="card-header text-info category" th:text="${program.kategoriProgram}"></div>
+                        <div class="card-body">
+                            <h5 class="card-title program-title" th:text="${program.judul}"></h5>
+                            <p class="card-text description-program" th:text="${program.deskripsi}"></p>
+
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                    <a th:href="'/program-' + ${program.id}" class="card-link">Lihat detail</a>
+                                </span>
+                                <span th:if="${role == 'admin_PROGRAM'}">
+                                    <a th:href="'/edit-program-' + ${program.id}" class="btn btn-primary" style="padding: 5px 10px;"><i class="bx bx-edit"></i></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center" style="margin-top: 50px;">
+            <a type="button" class="btn rounded-pill me-2 btn-primary" href="/program">Lihat Semua Program</a>
+        </div>
+    </section>
+
+    <!-- Main JS -->
+    <script src="../../assets/js/front-main.js"></script>
+
+    <!-- Page JS -->
+    <script src="../../assets/js/front-page-landing.js"></script>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

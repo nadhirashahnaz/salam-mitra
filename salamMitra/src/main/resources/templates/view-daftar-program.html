@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Daftar Program | Salam Mitra</title>
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 300px; /* Adjust the height as per your requirement */
+            object-fit: cover; /* Ensures the image covers the entire space allocated */
+        }
+        .description-program {
+            height: 70px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit to three lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis for overflow text */
+        }
+    </style>
+  </head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+        <div class="layout-container">
+            <div class="layout-page">
+                <nav th:replace="~{fragments/navbar :: navbar('program')}"></nav>
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="text-center" style="padding-top: 3%; padding-bottom: 3%;">
+                            <h1 class="display-3"><strong>Daftar Program</strong></h1>
+                            <th:block th:if="${role == 'admin_PROGRAM'}">
+                                <a type="button" class="btn btn-primary mb-3" href="/tambah-program">+ Tambah Program</a>
+                            </th:block>
+                        </div>
+
+                        <div class="alert alert-success" style="margin-left: 40px; margin-right: 40px;" role="alert" th:text="${successMessage}" th:if="${successMessage}"></div>
+                        <div class="alert alert-danger" style="margin-left: 40px; margin-right: 40px;" role="alert" th:text="${error}" th:if="${error}"></div>
+
+                        <div class="d-flex flex-wrap mt-4" style="margin-left: 40px; margin-right: 40px;">
+                            <!-- Filter button -->
+                            <button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+                
+                            <!-- Button dropdown for sorting -->
+                            <div class="btn-group mb-3" style="margin-left: 5px;">
+                                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Urutkan
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/program-judul-desc">Judul: A-Z</a></li>
+                                    <li><a class="dropdown-item" href="/program-judul-asc">Judul: Z-A</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- Reset filter button -->
+                            <a class="btn btn-outline-primary mb-3" href="/program" style="margin-left: 5px;"><i class="bx bx-reset"></i></a>
+                
+                            <!-- Search input -->
+                            
+                            <form action="/program-cari" method="get" class="input-group mb-3">
+                                <input type="search" id="searchInput" name="query" placeholder="Cari berdasarkan judul atau kategori program..." class="form-control">
+                                <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i class="bx bx-search"></i></button>
+                            </form>                            
+
+                        </div>
+
+                        <!-- Empty program list message -->
+                        <div class="text-center">
+                            <th:block th:if="${listProgram.isEmpty()}">
+                                <p style="display: flex; flex-direction: column; justify-content: center; height: 25vh;">Mohon maaf, tidak ada program yang tersedia.</p>
+                            </th:block>
+                        </div>
+
+                        <div class="row row row-cols-1 row-cols-md-3 g-4" style="margin-top: 20px; margin-left: 30px; margin-right: 30px;">
+                            <!-- Iterate over programs -->
+                            <div th:each="program : ${listProgram}" >
+                                <div class="col">
+                                    <div class="card h-100">
+                                        <img class="card-img-top" th:if="${program.fotoProgram != null}" th:src="'data:image/jpeg;base64,' + ${program.imageBase64}" alt="Program Image">
+                                        <img class="card-img-top" th:if="${program.fotoProgram == null}" src="/assets/img/illustrations/placeholder-program.png" alt="Placeholder">
+                                        <div class="card-header text-info category" th:text="${program.kategoriProgram}"></div>
+                                        <div class="card-body">
+                                            <h5 class="card-title program-title" th:text="${program.judul}"></h5>
+                                            <p class="card-text description-program" th:text="${program.deskripsi}"></p>
+                                            
+                                            <div class="d-flex justify-content-between">
+                                                <span>
+                                                    <a th:href="'/program-' + ${program.id}" class="card-link">Lihat detail</a>
+                                                </span>
+                                                <span th:if="${role == 'admin_PROGRAM'}">
+                                                    <a th:href="'/edit-program-' + ${program.id}" class="btn btn-primary" style="padding: 5px 10px;"><i class="bx bx-edit"></i></a>
+                                                </span>
+                                            </div>                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="/filter-program" method="GET">
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Filter Program</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col mb-3">
+                        <label for="kategoriProgram" class="form-label">Kategori Program</label>
+                        <select class="form-select" id="kategoriProgram" name="kategoriProgram">
+                            <option value="">Pilih kategori program</option>
+                            <th:block th:each="kategoriProgram : ${daftarKategoriProgram}">
+                                <option th:value="${kategoriProgram}" th:text="${kategoriProgram}"></option>
+                            </th:block>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                        <label for="kategoriProgram" class="form-label">Kategori Program</label>
+                        <select class="form-select" id="kategoriAsnaf" name="kategoriAsnaf">
+                            <option value="">Pilih kategori program</option>
+                            <th:block th:each="kategoriAsnaf : ${daftarKategoriAsnaf}">
+                                <option th:value="${kategoriAsnaf}" th:text="${kategoriAsnaf}"></option>
+                            </th:block>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                        <label for="kategoriProgram" class="form-label">Provinsi</label>
+                        <select class="form-select" id="provinsi" name="provinsi">
+                            <option value="">Pilih provinsi</option>
+                            <th:block th:each="provinsi : ${daftarProvinsi}">
+                                <option th:value="${provinsi}" th:text="${provinsi}"></option>
+                            </th:block>
+                        </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    <form>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to open the filter pop-up
+        function openFilterPopup() {
+            $('#filterPopup').show();
+        }
+
+        // Function to close the filter pop-up
+        function closeFilterPopup() {
+            $('#filterPopup').hide();
+        }
+
+        // Function to toggle sorting button and icon
+        function toggleSort() {
+            var sortIcon = $('#sortIcon');
+            var cardsContainer = $('.row-cols-1');
+            var cards = $('.card');
+
+            // Check the current sorting order
+            var ascendingOrder = sortIcon.hasClass('bx-sort-a-z');
+
+            // Sort the cards based on program titles
+            cards.sort(function(a, b) {
+                var titleA = $(a).find('.program-title').text().toLowerCase();
+                var titleB = $(b).find('.program-title').text().toLowerCase();
+
+                if (ascendingOrder) {
+                    return titleA.localeCompare(titleB); // Sort alphabetically in ascending order
+                } else {
+                    return titleB.localeCompare(titleA); // Sort alphabetically in descending order
+                }
+            });
+
+            // Update the DOM with the sorted cards
+            cardsContainer.empty().append(cards);
+
+            // Toggle sorting icon and order
+            if (ascendingOrder) {
+                sortIcon.removeClass('bx-sort-a-z').addClass('bx-sort-z-a');
+            } else {
+                sortIcon.removeClass('bx-sort-z-a').addClass('bx-sort-a-z');
+            }
+        }
+
+
+        // Function to open the filter pop-up
+        function openFilterPopup() {
+            $('#filterPopup').show();
+        }
+
+        // Function to close the filter pop-up
+        function closeFilterPopup() {
+            $('#filterPopup').hide();
+        }
+    </script>
+
+    <script>
+        function removeAlerts() {
+            setTimeout(function () {
+                jQuery('.alert').fadeOut('fast', function () {
+                    jQuery(this).remove();
+                });
+            }, 3000);
+        }
+
+        removeAlerts();
+    </script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

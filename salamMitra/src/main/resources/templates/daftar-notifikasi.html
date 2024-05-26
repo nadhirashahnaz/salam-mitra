@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object
+      th:include="~{fragments/common :: fragment}"
+      th:remove="tag"
+    ></object>
+    <title>Daftar Notifikasi | Salam Mitra</title>
+    <style>
+      a {
+        color: #435971;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #435971;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar layout-without-menu">
+      <div class="layout-container">
+        <div class="layout-page">
+          <nav th:replace="~{fragments/navbar :: navbar('notifikasi')}"></nav>
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div
+                class="text-center"
+                style="padding-top: 3%; padding-bottom: 3%"
+              >
+                <h1 class="display-3"><strong>Notifikasi</strong></h1>
+              </div>
+
+              <div th:if="${listNotifikasi.isEmpty()}" class="col">
+                <div class="card">
+                  <div class="card-body">
+                    <p class="card-text">Tidak ada notifikasi.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <tr
+                    th:unless="${listNotifikasi.isEmpty()}"
+                    th:each="notifikasi, iterationStatus: ${listNotifikasi}"
+                    th:classappend="${notifikasi.read} ? '' : 'table-warning'"
+                  >
+                    <td th:data-read="${notifikasi.read}">
+                      <a
+                        th:href="@{/notifikasi/markAsRead/{id}(id=${notifikasi.id})}"
+                      >
+                        <p th:text="${notifikasi.message}"></p>
+                        <p style="font-size: smaller">
+                          <span
+                            th:text="${#dates.format(notifikasi.notifiedDate, 'HH:mm:ss dd/MM/yyyy')}"
+                          ></span>
+                        </p>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
